@@ -142,7 +142,7 @@
         if (username === validCredentials.username && password === validCredentials.password) {
           // Successful login - store session and redirect to protected content
           sessionStorage.setItem('authenticated', 'true');
-          window.location.href = 'analyzertool.html';
+          window.location.href = 'analyzertool';
         } else {
           // Show error message
           errorMessage.style.display = 'block';
