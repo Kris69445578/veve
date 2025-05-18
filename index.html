@@ -440,7 +440,7 @@
       
       <div class="security-info">
         <i class="fas fa-lock"></i>
-        <span>POWERD BY DERIV</span>
+        <span>POWERED BY DERIV</span>
       </div>
     </form>
     
@@ -464,6 +464,22 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // First check if we're coming from a logout action
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('logout')) {
+        // Clear all session data
+        sessionStorage.removeItem('authenticated');
+        sessionStorage.removeItem('lastActivity');
+        localStorage.removeItem('rememberedUser');
+      }
+      
+      // Check if user is already logged in
+      if (sessionStorage.getItem('authenticated') === 'true') {
+        // Redirect to the analyzer tool if already logged in
+        window.location.href = 'analyzertool.html';
+        return;
+      }
+      
       const loginForm = document.getElementById('loginForm');
       const errorMessage = document.getElementById('errorMessage');
       const togglePassword = document.getElementById('togglePassword');
@@ -640,7 +656,7 @@
       logoutButton.addEventListener('click', function() {
         clearInterval(countdown);
         sessionStorage.removeItem('authenticated');
-        window.location.href = 'index.html';
+        window.location.href = 'index.html?logout=true';
       });
       
       // Start timeout timer on page load (for demo)
@@ -653,7 +669,7 @@
       // Forgot password handler
       forgotPassword.addEventListener('click', function(e) {
         e.preventDefault();
-        alert('Password reset instructions will be sent to your registered email if your account exists,login help call 0711745588.');
+        alert('Password reset instructions will be sent to your registered email if your account exists, login help call 0711745588.');
       });
     });
   </script>
