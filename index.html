@@ -464,21 +464,10 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // First check if we're coming from a logout action
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.has('logout')) {
-        // Clear all session data
-        sessionStorage.removeItem('authenticated');
-        sessionStorage.removeItem('lastActivity');
-        localStorage.removeItem('rememberedUser');
-      }
-      
-      // Check if user is already logged in
-      if (sessionStorage.getItem('authenticated') === 'true') {
-        // Redirect to the analyzer tool if already logged in
-        window.location.href = 'analyzertool.html';
-        return;
-      }
+      // Clear all authentication data on page load
+      sessionStorage.removeItem('authenticated');
+      sessionStorage.removeItem('lastActivity');
+      localStorage.removeItem('rememberedUser');
       
       const loginForm = document.getElementById('loginForm');
       const errorMessage = document.getElementById('errorMessage');
