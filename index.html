@@ -3,46 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WAMITI TRADER - Login</title>
+<title>WAMITI TRADER - Secure Login</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
+  :root {
+    --primary: #0057ff;
+    --secondary: #00c8ff;
+    --error: #ff5555;
+    --success: #4CAF50;
+    --dark-bg: #121212;
+    --card-bg: #1e1e1e;
+    --input-bg: #252525;
+    --text-light: #eee;
+    --text-muted: #aaa;
+    --border: #0057ff;
+  }
+  
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   }
   
   body {
-    background: #121212;
-    color: #eee;
+    background: var(--dark-bg);
+    color: var(--text-light);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Animated background */
+  .bg-animation {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
     overflow: hidden;
   }
   
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0, 87, 255, 0.1);
+    animation: float 15s infinite linear;
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-1000px) rotate(720deg); }
+  }
+  
   .login-container {
-    background: #1e1e1e;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 87, 255, 0.6);
-    padding: 30px;
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 87, 255, 0.3);
+    padding: 40px;
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 200, 255, 0.2);
+  }
+  
+  .login-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(0, 87, 255, 0.1),
+      rgba(0, 200, 255, 0.05)
+    );
+    z-index: -1;
+    transform: rotate(30deg);
   }
   
   .logo {
-    color: #00c8ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .logo-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    box-shadow: 0 5px 15px rgba(0, 200, 255, 0.4);
+  }
+  
+  .logo-icon i {
+    font-size: 28px;
+    color: white;
+  }
+  
+  .logo-text {
+    color: var(--secondary);
     font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+  
+  .logo-subtext {
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 300;
   }
   
   .login-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
   }
   
   .form-group {
@@ -50,108 +139,523 @@
     flex-direction: column;
     gap: 8px;
     text-align: left;
+    position: relative;
   }
   
   label {
     color: #7db8ff;
     font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .input-wrapper {
+    position: relative;
   }
   
   input {
-    background: #252525;
-    border: 1px solid #0057ff;
-    border-radius: 6px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
     color: white;
-    padding: 12px;
+    padding: 14px 14px 14px 40px;
     font-size: 14px;
     outline: none;
-  }
-  
-  input:focus {
-    border-color: #00c8ff;
-    box-shadow: 0 0 5px rgba(0, 200, 255, 0.5);
-  }
-  
-  button {
-    background: linear-gradient(90deg, #0057ff, #00c8ff);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
+    width: 100%;
     transition: all 0.3s ease;
   }
   
+  input:focus {
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(0, 200, 255, 0.2);
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary);
+    font-size: 16px;
+  }
+  
+  .password-toggle {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .password-toggle:hover {
+    color: var(--secondary);
+  }
+  
+  button {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  
   button:hover {
-    background: linear-gradient(90deg, #0047d4, #00b8e6);
-    box-shadow: 0 0 10px rgba(0, 200, 255, 0.5);
+    background: linear-gradient(135deg, #0047d4, #00b8e6);
+    box-shadow: 0 5px 15px rgba(0, 200, 255, 0.4);
+    transform: translateY(-2px);
+  }
+  
+  button:active {
+    transform: translateY(0);
+  }
+  
+  button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 50px;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(30deg);
+    transition: all 0.3s;
+  }
+  
+  button:hover::after {
+    left: 120%;
   }
   
   .error-message {
-    color: #ff5555;
+    color: var(--error);
     font-size: 14px;
-    margin-top: 10px;
+    margin-top: 5px;
     display: none;
+    text-align: left;
+    font-weight: 500;
   }
   
   .footer {
-    margin-top: 20px;
+    margin-top: 30px;
     font-size: 12px;
-    color: #aaa;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .footer a {
+    color: var(--secondary);
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  
+  .footer a:hover {
+    text-decoration: underline;
+  }
+  
+  .security-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 15px;
+    color: var(--success);
+    font-size: 12px;
+  }
+  
+  .security-info i {
+    font-size: 14px;
+  }
+  
+  /* Loading spinner */
+  .spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+    margin: 0 auto;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 480px) {
+    .login-container {
+      padding: 30px 20px;
+      margin: 0 15px;
+    }
+    
+    .logo-text {
+      font-size: 20px;
+    }
+  }
+  
+  /* Password strength meter */
+  .password-strength {
+    height: 4px;
+    background: var(--input-bg);
+    border-radius: 2px;
+    margin-top: 5px;
+    overflow: hidden;
+    display: none;
+  }
+  
+  .strength-meter {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s, background 0.3s;
+  }
+  
+  /* Session timeout warning */
+  .timeout-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .timeout-content {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 5px 30px rgba(0, 87, 255, 0.5);
+  }
+  
+  .timeout-content h3 {
+    color: var(--secondary);
+    margin-bottom: 15px;
+  }
+  
+  .timeout-content p {
+    margin-bottom: 20px;
+  }
+  
+  .timeout-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .timeout-buttons button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .timeout-buttons button:last-child {
+    background: var(--error);
+  }
+  
+  /* Failed attempts warning */
+  .attempts-warning {
+    color: var(--error);
+    font-size: 13px;
+    margin-top: 5px;
+    display: none;
   }
 </style>
 </head>
 <body>
+  <!-- Animated background circles -->
+  <div class="bg-animation">
+    <div class="bg-circle" style="width: 300px; height: 300px; top: -150px; left: -150px; animation-delay: 0s;"></div>
+    <div class="bg-circle" style="width: 200px; height: 200px; top: -100px; right: -100px; animation-delay: 2s;"></div>
+    <div class="bg-circle" style="width: 150px; height: 150px; bottom: -75px; left: 20%; animation-delay: 4s;"></div>
+    <div class="bg-circle" style="width: 250px; height: 250px; bottom: -125px; right: 10%; animation-delay: 6s;"></div>
+  </div>
+
   <div class="login-container">
-    <div class="logo">Higher-Lower PRO Signal Generator v3.6</div>
+    <div class="logo">
+      <div class="logo-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="logo-text">Higher-Lower PRO Signal Generator v3.6</div>
+      <div class="logo-subtext">Advanced Trading Analytics Platform</div>
+    </div>
+    
     <form class="login-form" id="loginForm">
       <div class="form-group">
         <label for="username">Username</label>
-        <input type="text" id="username" name="username" required>
+        <div class="input-wrapper">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter your username">
+        </div>
       </div>
+      
       <div class="form-group">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+        <div class="input-wrapper">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
+          <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+        </div>
+        <div class="password-strength" id="passwordStrength">
+          <div class="strength-meter" id="strengthMeter"></div>
+        </div>
       </div>
-      <div class="error-message" id="errorMessage">Invalid username or password</div>
-      <button type="submit">LOGIN</button>
+      
+      <div class="form-group" style="flex-direction: row; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center;">
+          <input type="checkbox" id="rememberMe" name="rememberMe" style="width: auto; margin-right: 8px;">
+          <label for="rememberMe" style="margin-bottom: 0; cursor: pointer;">Remember me</label>
+        </div>
+        <a href="#" id="forgotPassword" style="font-size: 13px; color: var(--secondary);">Forgot password?</a>
+      </div>
+      
+      <div class="error-message" id="errorMessage">
+        <i class="fas fa-exclamation-circle"></i> Invalid username or password
+      </div>
+      
+      <div class="attempts-warning" id="attemptsWarning">
+        <i class="fas fa-shield-alt"></i> <span id="attemptsCount">3</span> attempts remaining before lockout
+      </div>
+      
+      <button type="submit" id="loginButton">
+        <span id="buttonText">LOGIN</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+      
+      <div class="security-info">
+        <i class="fas fa-lock"></i>
+        <span>POWERD BY DERIV</span>
+      </div>
     </form>
-    <div class="footer">CONTACT ADMIN TO GET YOUR LOGINS @ +254711745588</div>
+    
+    <div class="footer">
+      <div>CONTACT ADMIN TO GET YOUR LOGINS @ +254711745588</div>
+      <div>By logging in, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></div>
+    </div>
+  </div>
+  
+  <!-- Session timeout modal -->
+  <div class="timeout-modal" id="timeoutModal">
+    <div class="timeout-content">
+      <h3><i class="fas fa-clock"></i> Session About to Expire</h3>
+      <p>Your session will expire due to inactivity in <span id="timeoutCounter">60</span> seconds. Do you want to continue?</p>
+      <div class="timeout-buttons">
+        <button id="continueSession">Continue Session</button>
+        <button id="logoutButton">Logout</button>
+      </div>
+    </div>
   </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const loginForm = document.getElementById('loginForm');
       const errorMessage = document.getElementById('errorMessage');
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+      const loginButton = document.getElementById('loginButton');
+      const buttonText = document.getElementById('buttonText');
+      const spinner = document.getElementById('spinner');
+      const attemptsWarning = document.getElementById('attemptsWarning');
+      const attemptsCount = document.getElementById('attemptsCount');
+      const passwordStrength = document.getElementById('passwordStrength');
+      const strengthMeter = document.getElementById('strengthMeter');
+      const timeoutModal = document.getElementById('timeoutModal');
+      const timeoutCounter = document.getElementById('timeoutCounter');
+      const continueSession = document.getElementById('continueSession');
+      const logoutButton = document.getElementById('logoutButton');
+      const forgotPassword = document.getElementById('forgotPassword');
       
-      // Valid credentials (in a real app, these would be validated server-side)
+      // Simulated valid credentials (in production, use server-side validation)
       const validCredentials = {
         username: 'MKUU',
         password: 'wamiti123' // Change this to your desired password
       };
       
+      let failedAttempts = 0;
+      const maxAttempts = 3;
+      let timeoutTimer;
+      let countdown;
+      
+      // Toggle password visibility
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('fa-eye');
+        this.classList.toggle('fa-eye-slash');
+      });
+      
+      // Password strength indicator
+      passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        if (password.length > 0) {
+          passwordStrength.style.display = 'block';
+          let strength = 0;
+          
+          // Length check
+          if (password.length > 7) strength += 1;
+          if (password.length > 10) strength += 1;
+          
+          // Character diversity
+          if (/[A-Z]/.test(password)) strength += 1;
+          if (/[0-9]/.test(password)) strength += 1;
+          if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+          
+          // Update meter
+          const width = (strength / 5) * 100;
+          strengthMeter.style.width = `${width}%`;
+          
+          // Color based on strength
+          if (strength <= 2) {
+            strengthMeter.style.background = '#ff5555';
+          } else if (strength <= 4) {
+            strengthMeter.style.background = '#ffcc00';
+          } else {
+            strengthMeter.style.background = '#4CAF50';
+          }
+        } else {
+          passwordStrength.style.display = 'none';
+        }
+      });
+      
+      // Form submission
       loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const username = document.getElementById('username').value;
+        const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
         
-        // Validate credentials
-        if (username === validCredentials.username && password === validCredentials.password) {
-          // Successful login - store session and redirect to protected content
-          sessionStorage.setItem('authenticated', 'true');
-          window.location.href = 'analyzertool.html';
-        } else {
-          // Show error message
-          errorMessage.style.display = 'block';
-          setTimeout(() => {
-            errorMessage.style.display = 'none';
-          }, 3000);
-        }
+        // Show loading state
+        buttonText.style.display = 'none';
+        spinner.style.display = 'block';
+        loginButton.disabled = true;
+        
+        // Simulate network delay
+        setTimeout(() => {
+          // Validate credentials
+          if (username === validCredentials.username && password === validCredentials.password) {
+            // Successful login
+            if (rememberMe) {
+              localStorage.setItem('rememberedUser', username);
+            } else {
+              localStorage.removeItem('rememberedUser');
+            }
+            
+            // Store session
+            sessionStorage.setItem('authenticated', 'true');
+            sessionStorage.setItem('lastActivity', new Date().getTime());
+            
+            // Reset failed attempts
+            failedAttempts = 0;
+            
+            // Redirect to protected content
+            window.location.href = 'analyzertool.html';
+          } else {
+            // Failed login
+            failedAttempts++;
+            
+            // Show error message
+            errorMessage.style.display = 'flex';
+            
+            // Update attempts warning
+            if (failedAttempts >= maxAttempts - 1) {
+              attemptsWarning.style.display = 'flex';
+              attemptsCount.textContent = maxAttempts - failedAttempts;
+            }
+            
+            // Lock account after max attempts
+            if (failedAttempts >= maxAttempts) {
+              loginButton.disabled = true;
+              loginButton.style.background = '#666';
+              errorMessage.innerHTML = '<i class="fas fa-lock"></i> Account locked. Please contact admin.';
+              setTimeout(() => {
+                loginButton.disabled = false;
+                loginButton.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
+                failedAttempts = 0;
+                errorMessage.style.display = 'none';
+                attemptsWarning.style.display = 'none';
+              }, 30000); // 30 second lockout
+            }
+          }
+          
+          // Reset button state
+          buttonText.style.display = 'block';
+          spinner.style.display = 'none';
+          loginButton.disabled = false;
+        }, 1500); // Simulated delay
+      });
+      
+      // Check for remembered user
+      const rememberedUser = localStorage.getItem('rememberedUser');
+      if (rememberedUser) {
+        document.getElementById('username').value = rememberedUser;
+        document.getElementById('rememberMe').checked = true;
+      }
+      
+      // Session timeout simulation (for demo purposes)
+      function startTimeoutTimer() {
+        clearTimeout(timeoutTimer);
+        timeoutTimer = setTimeout(showTimeoutWarning, 300000); // 5 minutes
+      }
+      
+      function showTimeoutWarning() {
+        timeoutModal.style.display = 'flex';
+        let seconds = 60;
+        
+        countdown = setInterval(() => {
+          seconds--;
+          timeoutCounter.textContent = seconds;
+          
+          if (seconds <= 0) {
+            clearInterval(countdown);
+            sessionStorage.removeItem('authenticated');
+            window.location.href = 'index.html';
+          }
+        }, 1000);
+      }
+      
+      continueSession.addEventListener('click', function() {
+        clearInterval(countdown);
+        timeoutModal.style.display = 'none';
+        sessionStorage.setItem('lastActivity', new Date().getTime());
+        startTimeoutTimer();
+      });
+      
+      logoutButton.addEventListener('click', function() {
+        clearInterval(countdown);
+        sessionStorage.removeItem('authenticated');
+        window.location.href = 'index.html';
+      });
+      
+      // Start timeout timer on page load (for demo)
+      startTimeoutTimer();
+      
+      // Reset timeout timer on user activity
+      document.addEventListener('mousemove', startTimeoutTimer);
+      document.addEventListener('keypress', startTimeoutTimer);
+      
+      // Forgot password handler
+      forgotPassword.addEventListener('click', function(e) {
+        e.preventDefault();
+        alert('Password reset instructions will be sent to your registered email if your account exists,login help call 0711745588.');
       });
     });
   </script>
 </body>
-</html>  
+</html>
