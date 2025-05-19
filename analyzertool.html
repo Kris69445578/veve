@@ -1,1767 +1,2114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>WAMITI TRADER HIGHER-LOWER SIGNAL GENERATOR</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #121212; 
-    color: #eee;
-    padding: 8px;
-    height: 100vh;
-    overflow: hidden;
-  }
-  #app {
-    height: calc(100vh - 16px);
-    max-width: 100%;
-    background: #1e1e1e;
-    border-radius: 12px;
-    box-shadow: 0 0 15px rgba(0, 87, 255, 0.6);
-    display: grid;
-    grid-template-rows: auto 1fr;
-    overflow: hidden;
-  }
-  header {
-    padding: 10px;
-    font-size: clamp(14px, 4vw, 18px);
-    font-weight: 700;
-    text-align: center;
-    background: linear-gradient(90deg,#0057ff,#00c8ff);
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .header-controls {
-    display: flex;
-    gap: 10px;
-  }
-  .settings-btn {
-    background: rgba(255,255,255,0.1);
-    border: none;
-    color: white;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .main-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 8px;
-    padding: 8px;
-    overflow-y: auto;
-    height: 100%;
-  }
-  .vol-card {
-    background: #252525;
-    border-radius: 10px;
-    padding: 10px;
-    box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
-    position: relative;
-  }
-  .vol-title {
-    font-size: clamp(12px, 3vw, 14px);
-    color: #7db8ff;
-    margin-bottom: 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .data-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    font-size: clamp(10px, 2.5vw, 12px);
-  }
-  .data-item {
-    display: flex;
-    justify-content: space-between;
-  }
-  .data-label {
-    color: #7db8ff;
-  }
-  .indicator-value {
-    font-weight: 600;
-    color: white;
-  }
-  .barrier-inputs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 8px;
-  }
-  .barrier-group {
-    display: flex;
-    flex-direction: column;
-  }
-  .barrier-label {
-    font-size: clamp(10px, 2.5vw, 11px);
-    color: #abbcff;
-    margin-bottom: 2px;
-  }
-  .barrier-input {
-    width: 100%;
-    background: #121212;
-    border: 1px solid #0057ff;
-    border-radius: 6px;
-    color: white;
-    padding: 4px 6px;
-    font-size: clamp(10px, 2.5vw, 12px);
-    text-align: center;
-  }
-  .signal-area {
-    margin-top: 8px;
-    padding: 6px;
-    border-radius: 8px;
-    font-size: clamp(11px, 3vw, 13px);
-    text-align: center;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-  }
-  .signal-waiting {
-    background: rgba(180, 180, 180, 0.1);
-    color: #aaa;
-    border: 1px solid rgba(150, 150, 150, 0.3);
-  }
-  .signal-higher {
-    background: rgba(0, 255, 0, 0.15);
-    color: #0f0;
-    border: 1px solid rgba(0, 255, 0, 0.5);
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
-    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-  }
-  .signal-lower {
-    background: rgba(255, 0, 0, 0.15);
-    color: #f00;
-    border: 1px solid rgba(255, 0, 0, 0.5);
-    box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
-    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-  }
-  .signal-building {
-    background: rgba(255, 165, 0, 0.15);
-    color: #ffa500;
-    border: 1px solid rgba(255, 165, 0, 0.5);
-    box-shadow: 0 0 10px rgba(255, 165, 0, 0.3);
-    text-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
-    animation: pulse-building 1.5s infinite;
-  }
-  .signal-weak {
-    background: rgba(255, 255, 0, 0.15);
-    color: #ff0;
-    border: 1px solid rgba(255, 255, 0, 0.5);
-    box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
-    text-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
-    animation: pulse-weak 2s infinite;
-  }
-  .signal-consolidation {
-    background: rgba(138, 43, 226, 0.15);
-    color: #9932cc;
-    border: 1px solid rgba(138, 43, 226, 0.5);
-    box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
-    text-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
-    animation: pulse-consolidation 2s infinite;
-  }
-  .signal-very-strong {
-    background: rgba(0, 255, 255, 0.2);
-    color: #0ff;
-    border: 1px solid rgba(0, 255, 255, 0.7);
-    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-    text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
-    animation: pulse-very-strong 1s infinite;
-  }
-  @keyframes pulse-building {
-    0% { box-shadow: 0 0 5px rgba(255, 165, 0, 0.3); }
-    50% { box-shadow: 0 0 15px rgba(255, 165, 0, 0.5); }
-    100% { box-shadow: 0 0 5px rgba(255, 165, 0, 0.3); }
-  }
-  @keyframes pulse-weak {
-    0% { box-shadow: 0 0 5px rgba(255, 255, 0, 0.3); }
-    50% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.5); }
-    100% { box-shadow: 0 0 5px rgba(255, 255, 0, 0.3); }
-  }
-  @keyframes pulse-consolidation {
-    0% { box-shadow: 0 0 5px rgba(138, 43, 226, 0.3); }
-    50% { box-shadow: 0 0 15px rgba(138, 43, 226, 0.5); }
-    100% { box-shadow: 0 0 5px rgba(138, 43, 226, 0.3); }
-  }
-  @keyframes pulse-very-strong {
-    0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
-    50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.7); }
-    100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
-  }
-  .countdown {
-    font-size: clamp(10px, 2.5vw, 11px);
-    color: #00bbff;
-    text-align: center;
-    margin-top: 4px;
-  }
-  .connection-status {
-    position: fixed;
-    bottom: 8px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.7);
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 11px;
-    z-index: 10;
-  }
-  .connected { color: #0f0; }
-  .disconnected { color: #f00; }
-  .connecting { color: #ff0; }
-  .indicator-row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 4px;
-  }
-  .indicator-name {
-    color: #7db8ff;
-    font-size: 10px;
-  }
-  .indicator-bar {
-    height: 4px;
-    border-radius: 2px;
-    margin-top: 2px;
-  }
-  .positive-bar {
-    background: linear-gradient(90deg, rgba(0,255,0,0.3), rgba(0,255,0,0.8));
-  }
-  .negative-bar {
-    background: linear-gradient(90deg, rgba(255,0,0,0.3), rgba(255,0,0,0.8));
-  }
-  .neutral-bar {
-    background: rgba(150,150,150,0.3);
-  }
-  .indicator-strength {
-    font-size: 9px;
-    color: #aaa;
-    text-align: right;
-  }
-  .signal-explanation {
-    font-size: 9px;
-    color: #ccc;
-    margin-top: 4px;
-    text-align: center;
-    padding: 0 4px;
-  }
-  .confidence-meter {
-    height: 6px;
-    background: #333;
-    border-radius: 3px;
-    margin-top: 4px;
-    overflow: hidden;
-  }
-  .confidence-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #f00, #ff0, #0f0);
-    width: 0%;
-    transition: width 0.5s ease;
-  }
-  .confidence-label {
-    font-size: 9px;
-    text-align: center;
-    margin-top: 2px;
-  }
-  .timeframe-selector {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    margin-bottom: 8px;
-  }
-  .timeframe-btn {
-    background: #333;
-    border: 1px solid #444;
-    color: #ccc;
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 10px;
-    cursor: pointer;
-  }
-  .timeframe-btn.active {
-    background: #0057ff;
-    color: white;
-    border-color: #0077ff;
-  }
-  .settings-panel {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #333;
-    border: 1px solid #444;
-    border-radius: 8px;
-    padding: 10px;
-    z-index: 20;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    display: none;
-  }
-  .settings-panel h3 {
-    color: #7db8ff;
-    font-size: 14px;
-    margin-bottom: 8px;
-  }
-  .settings-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 6px;
-    font-size: 12px;
-  }
-  .settings-label {
-    color: #ccc;
-  }
-  .settings-input {
-    width: 60px;
-    background: #222;
-    border: 1px solid #444;
-    color: white;
-    border-radius: 4px;
-    padding: 2px 4px;
-    text-align: center;
-  }
-  .close-settings {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background: none;
-    border: none;
-    color: #ccc;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .pattern-indicator {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 10px;
-    background: rgba(0,0,0,0.5);
-    padding: 2px 4px;
-    border-radius: 4px;
-  }
-  .pattern-bullish {
-    color: #0f0;
-  }
-  .pattern-bearish {
-    color: #f00;
-  }
-  .pattern-neutral {
-    color: #ccc;
-  }
-
-  @media (max-width: 600px) {
-    .main-content {
-      grid-template-columns: 1fr 1fr;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+  <title>Wamiti HL Signal Generator</title>
+  <style>
+    /* Combined CSS from both files */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .vol-card {
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      background-color: #121212;
+      color: #eee;
+    }
+
+    /* Navigation */
+    .navbar {
+      background-color: #0d6efd;
+      padding: 10px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .menu {
+      list-style: none;
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 5px 0;
+    }
+
+    .menu li a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background 0.3s ease;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .menu li a:hover {
+      background-color: #0b5ed7;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    #content-area {
+      min-height: 60vh;
+      background-color: #1e1e1e;
+      border-radius: 8px;
+      padding: 30px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0,87,255,0.6);
+    }
+
+    /* Highlighting Colors */
+    .highlight.yellow {
+      color: goldenrod;
+      font-weight: bold;
+    }
+    .highlight.green {
+      color: green;
+      font-weight: bold;
+    }
+    .highlight.cyan {
+      color: teal;
+      font-weight: bold;
+    }
+
+    /* Cards for Strengths & Limitations */
+    .flex-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card {
+      flex: 1 1 45%;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .card.green {
+      background: #d4edda;
+      color: #333;
+    }
+
+    .card.red {
+      background: #f8d7da;
+      color: #333;
+    }
+
+    /* Signal Generator App Styles */
+    #app {
+      height: calc(100vh - 16px);
+      max-width: 100%;
+      background: #1e1e1e;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 87, 255, 0.6);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      overflow: hidden;
+    }
+
+    header {
+      padding: 10px;
+      font-size: clamp(14px, 4vw, 18px);
+      font-weight: 700;
+      text-align: center;
+      background: linear-gradient(90deg,#0057ff,#00c8ff);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 10px;
+    }
+
+    .settings-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 8px;
       padding: 8px;
+      overflow-y: auto;
+      height: 100%;
     }
-    .data-grid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
 
-  @media (max-width: 400px) {
-    .main-content {
-      grid-template-columns: 1fr;
+    .vol-card {
+      background: #252525;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+      position: relative;
     }
-  }
-</style>
+
+    .vol-title {
+      font-size: clamp(12px, 3vw, 14px);
+      color: #7db8ff;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      font-size: clamp(10px, 2.5vw, 12px);
+    }
+
+    .data-item {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .data-label {
+      color: #7db8ff;
+    }
+
+    .indicator-value {
+      font-weight: 600;
+      color: white;
+    }
+
+    .barrier-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .barrier-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .barrier-label {
+      font-size: clamp(10px, 2.5vw, 11px);
+      color: #abbcff;
+      margin-bottom: 2px;
+    }
+
+    .barrier-input {
+      width: 100%;
+      background: #121212;
+      border: 1px solid #0057ff;
+      border-radius: 6px;
+      color: white;
+      padding: 4px 6px;
+      font-size: clamp(10px, 2.5vw, 12px);
+      text-align: center;
+    }
+
+    .signal-area {
+      margin-top: 8px;
+      padding: 6px;
+      border-radius: 8px;
+      font-size: clamp(11px, 3vw, 13px);
+      text-align: center;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .signal-waiting {
+      background: rgba(180, 180, 180, 0.1);
+      color: #aaa;
+      border: 1px solid rgba(150, 150, 150, 0.3);
+    }
+
+    .signal-higher {
+      background: rgba(0, 255, 0, 0.15);
+      color: #0f0;
+      border: 1px solid rgba(0, 255, 0, 0.5);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+      text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    }
+
+    .signal-lower {
+      background: rgba(255, 0, 0, 0.15);
+      color: #f00;
+      border: 1px solid rgba(255, 0, 0, 0.5);
+      box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
+      text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    }
+
+    .signal-building {
+      background: rgba(255, 165, 0, 0.15);
+      color: #ffa500;
+      border: 1px solid rgba(255, 165, 0, 0.5);
+      box-shadow: 0 0 10px rgba(255, 165, 0, 0.3);
+      text-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+      animation: pulse-building 1.5s infinite;
+    }
+
+    .signal-weak {
+      background: rgba(255, 255, 0, 0.15);
+      color: #ff0;
+      border: 1px solid rgba(255, 255, 0, 0.5);
+      box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
+      text-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
+      animation: pulse-weak 2s infinite;
+    }
+
+    .signal-consolidation {
+      background: rgba(138, 43, 226, 0.15);
+      color: #9932cc;
+      border: 1px solid rgba(138, 43, 226, 0.5);
+      box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+      text-shadow: 0 0 5px rgba(138, 43, 226, 0.5);
+      animation: pulse-consolidation 2s infinite;
+    }
+
+    .signal-very-strong {
+      background: rgba(0, 255, 255, 0.2);
+      color: #0ff;
+      border: 1px solid rgba(0, 255, 255, 0.7);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      text-shadow: 0 0 8px rgba(0, 255, 255, 0.7);
+      animation: pulse-very-strong 1s infinite;
+    }
+
+    @keyframes pulse-building {
+      0% { box-shadow: 0 0 5px rgba(255, 165, 0, 0.3); }
+      50% { box-shadow: 0 0 15px rgba(255, 165, 0, 0.5); }
+      100% { box-shadow: 0 0 5px rgba(255, 165, 0, 0.3); }
+    }
+
+    @keyframes pulse-weak {
+      0% { box-shadow: 0 0 5px rgba(255, 255, 0, 0.3); }
+      50% { box-shadow: 0 0 15px rgba(255, 255, 0, 0.5); }
+      100% { box-shadow: 0 0 5px rgba(255, 255, 0, 0.3); }
+    }
+
+    @keyframes pulse-consolidation {
+      0% { box-shadow: 0 0 5px rgba(138, 43, 226, 0.3); }
+      50% { box-shadow: 0 0 15px rgba(138, 43, 226, 0.5); }
+      100% { box-shadow: 0 0 5px rgba(138, 43, 226, 0.3); }
+    }
+
+    @keyframes pulse-very-strong {
+      0% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(0, 255, 255, 0.7); }
+      100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+    }
+
+    .countdown {
+      font-size: clamp(10px, 2.5vw, 11px);
+      color: #00bbff;
+      text-align: center;
+      margin-top: 4px;
+    }
+
+    .connection-status {
+      position: fixed;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      z-index: 10;
+    }
+
+    .connected { color: #0f0; }
+    .disconnected { color: #f00; }
+    .connecting { color: #ff0; }
+
+    .indicator-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+
+    .indicator-name {
+      color: #7db8ff;
+      font-size: 10px;
+    }
+
+    .indicator-bar {
+      height: 4px;
+      border-radius: 2px;
+      margin-top: 2px;
+    }
+
+    .positive-bar {
+      background: linear-gradient(90deg, rgba(0,255,0,0.3), rgba(0,255,0,0.8));
+    }
+
+    .negative-bar {
+      background: linear-gradient(90deg, rgba(255,0,0,0.3), rgba(255,0,0,0.8));
+    }
+
+    .neutral-bar {
+      background: rgba(150,150,150,0.3);
+    }
+
+    .indicator-strength {
+      font-size: 9px;
+      color: #aaa;
+      text-align: right;
+    }
+
+    .signal-explanation {
+      font-size: 9px;
+      color: #ccc;
+      margin-top: 4px;
+      text-align: center;
+      padding: 0 4px;
+    }
+
+    .confidence-meter {
+      height: 6px;
+      background: #333;
+      border-radius: 3px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f00, #ff0, #0f0);
+      width: 0%;
+      transition: width 0.5s ease;
+    }
+
+    .confidence-label {
+      font-size: 9px;
+      text-align: center;
+      margin-top: 2px;
+    }
+
+    .timeframe-selector {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+
+    .timeframe-btn {
+      background: #333;
+      border: 1px solid #444;
+      color: #ccc;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 10px;
+      cursor: pointer;
+    }
+
+    .timeframe-btn.active {
+      background: #0057ff;
+      color: white;
+      border-color: #0077ff;
+    }
+
+    .settings-panel {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #333;
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 10px;
+      z-index: 20;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      display: none;
+    }
+
+    .settings-panel h3 {
+      color: #7db8ff;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .settings-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 12px;
+    }
+
+    .settings-label {
+      color: #ccc;
+    }
+
+    .settings-input {
+      width: 60px;
+      background: #222;
+      border: 1px solid #444;
+      color: white;
+      border-radius: 4px;
+      padding: 2px 4px;
+      text-align: center;
+    }
+
+    .close-settings {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .pattern-indicator {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      font-size: 10px;
+      background: rgba(0,0,0,0.5);
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .pattern-bullish {
+      color: #0f0;
+    }
+
+    .pattern-bearish {
+      color: #f00;
+    }
+
+    .pattern-neutral {
+      color: #ccc;
+    }
+
+    .footer {
+      background: #0d6efd;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      margin-top: 40px;
+    }
+
+    /* Tab system */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @media (max-width: 600px) {
+      .main-content {
+        grid-template-columns: 1fr 1fr;
+      }
+      .vol-card {
+        padding: 8px;
+      }
+      .data-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div id="app">
-    <header>
-      <span>WAMITI HL SIGNAL GENERATOR</span>
-      <div class="header-controls">
-        <button class="settings-btn" id="settings-btn">Settings</button>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <ul class="menu">
+      <li><a onclick="showTab('documentation')">Documentation</a></li>
+      <li><a onclick="showTab('generator')">Signal Generator</a></li>
+      <li><a onclick="loadContent('overview')">Overview</a></li>
+      <li><a onclick="loadContent('core')">Core Components</a></li>
+      <li><a onclick="loadContent('signals')">Signal Logic</a></li>
+      <li><a onclick="loadContent('rules')">Trading Rules</a></li>
+      <li><a onclick="loadContent('custom')">Customization</a></li>
+      <li><a onclick="loadContent('strengths')">Strengths & Limitations</a></li>
+    </ul>
+  </nav>
+
+  <!-- Tab Content -->
+  <div id="documentation" class="tab-content active">
+    <!-- Documentation Content Area -->
+    <main id="content-area" class="container">
+      <!-- Content loaded dynamically -->
+    </main>
+  </div>
+
+  <div id="generator" class="tab-content">
+    <!-- Signal Generator App -->
+    <div id="app">
+      <header>
+        <span>WAMITI HL SIGNAL GENERATOR</span>
+        <div class="header-controls">
+          <button class="settings-btn" id="settings-btn">Settings</button>
+        </div>
+      </header>
+      <div class="main-content" id="cards-container"></div>
+      <div id="connection-status" class="connection-status disconnected">Disconnected</div>
+    </div>
+
+    <div class="settings-panel" id="settings-panel">
+      <button class="close-settings" id="close-settings">×</button>
+      <h3>Analysis Settings</h3>
+      <div class="settings-row">
+        <span class="settings-label">Confirmation Period:</span>
+        <input type="number" class="settings-input" id="confirmation-period" value="7" min="1" max="20">
       </div>
-    </header>
-    <div class="main-content" id="cards-container"></div>
-    <div id="connection-status" class="connection-status disconnected">Disconnected</div>
-  </div>
-
-  <div class="settings-panel" id="settings-panel">
-    <button class="close-settings" id="close-settings">×</button>
-    <h3>Analysis Settings</h3>
-    <div class="settings-row">
-      <span class="settings-label">Confirmation Period:</span>
-      <input type="number" class="settings-input" id="confirmation-period" value="7" min="1" max="20">
-    </div>
-    <div class="settings-row">
-      <span class="settings-label">Strong Threshold:</span>
-      <input type="number" class="settings-input" id="strong-threshold" value="75" min="50" max="100" step="5">
-    </div>
-    <div class="settings-row">
-      <span class="settings-label">Weak Threshold:</span>
-      <input type="number" class="settings-input" id="weak-threshold" value="40" min="20" max="60" step="5">
-    </div>
-    <div class="settings-row">
-      <span class="settings-label">Volume Weight:</span>
-      <input type="number" class="settings-input" id="volume-weight" value="20" min="0" max="50" step="5">
-    </div>
-    <div class="settings-row">
-      <span class="settings-label">Trend Weight:</span>
-      <input type="number" class="settings-input" id="trend-weight" value="25" min="0" max="50" step="5">
+      <div class="settings-row">
+        <span class="settings-label">Strong Threshold:</span>
+        <input type="number" class="settings-input" id="strong-threshold" value="75" min="50" max="100" step="5">
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Weak Threshold:</span>
+        <input type="number" class="settings-input" id="weak-threshold" value="40" min="20" max="60" step="5">
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Volume Weight:</span>
+        <input type="number" class="settings-input" id="volume-weight" value="20" min="0" max="50" step="5">
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Trend Weight:</span>
+        <input type="number" class="settings-input" id="trend-weight" value="25" min="0" max="50" step="5">
+      </div>
     </div>
   </div>
 
-<script>
-(() => {
-  const volatilities = [
-    { symbol: '1HZ10V', name: 'Vol 10 (1s)', barrierHigher: -0.48, barrierLower: 0.48 },
-    { symbol: '1HZ25V', name: 'Vol 25 (1s)', barrierHigher: -80, barrierLower: 80 },
-    { symbol: '1HZ50V', name: 'Vol 50 (1s)', barrierHigher: -61, barrierLower: 61 },
-    { symbol: '1HZ75V', name: 'Vol 75 (1s)', barrierHigher: -2.6, barrierLower: 2.6 }
-  ];
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Wamiti HL Signal Generator. All rights reserved.</p>
+    </div>
+  </footer>
 
-  // Default settings
-  let settings = {
-    confirmationPeriod: 7,
-    strongThreshold: 0.75,
-    weakThreshold: 0.4,
-    volumeWeight: 0.2,
-    trendWeight: 0.25,
-    patternRecognition: true,
-    timeFilter: true
-  };
-
-  const dataStore = {};
-  let ws = null;
-  const MIN_DATA_POINTS = 50;
-  const CONSOLIDATION_PERIOD = 15;
-  const CONSOLIDATION_RANGE_PERCENT = 0.5;
-  const PATTERN_LOOKBACK = 20;
-  const VERY_STRONG_THRESHOLD = 0.9;
-
-  // Enhanced EMA with smoothing and adaptive periods
-  class EnhancedEMA {
-    constructor(basePeriod = 12, adaptive = true) {
-      this.basePeriod = basePeriod;
-      this.adaptive = adaptive;
-      this.ema = null;
-      this.prevPrice = null;
-      this.volatility = 0;
-      this.volatilityPeriod = 10;
-      this.volatilityHistory = [];
-    }
-    
-    update(price) {
-      // Update volatility measure
-      if (this.prevPrice !== null) {
-        const priceChange = Math.abs(price - this.prevPrice) / this.prevPrice;
-        this.volatilityHistory.push(priceChange);
-        if (this.volatilityHistory.length > this.volatilityPeriod) {
-          this.volatilityHistory.shift();
-        }
-        this.volatility = this.volatilityHistory.reduce((sum, val) => sum + val, 0) / this.volatilityHistory.length;
-      }
-      this.prevPrice = price;
-      
-      // Adaptive period adjustment based on volatility
-      let period = this.basePeriod;
-      if (this.adaptive && this.volatility > 0) {
-        // More volatile markets use shorter periods
-        period = Math.max(5, Math.min(this.basePeriod, Math.round(this.basePeriod * (1 - this.volatility * 5))));
-      }
-      
-      const multiplier = 2 / (period + 1);
-      this.ema = this.ema === null ? price : (price - this.ema) * multiplier + this.ema;
-      return this.ema;
-    }
-    
-    getCurrent() {
-      return this.ema;
-    }
-  }
-
-  // Enhanced MACD with adaptive parameters
-  class EnhancedMACD {
-    constructor() {
-      this.fastEMA = new EnhancedEMA(12, true);
-      this.slowEMA = new EnhancedEMA(26, true);
-      this.signalEMA = new EnhancedEMA(9, true);
-      this.history = [];
-      this.maxHistory = 15;
-      this.divergenceHistory = [];
-    }
-    
-    update(price) {
-      const fast = this.fastEMA.update(price);
-      const slow = this.slowEMA.update(price);
-      const macdLine = fast - slow;
-      const signalLine = this.signalEMA.update(macdLine);
-      const histogram = macdLine - signalLine;
-      
-      // Track direction changes
-      const currentDirection = macdLine > signalLine ? 'up' : 'down';
-      const prevDirection = this.history.length > 0 ? this.history[this.history.length - 1].direction : null;
-      
-      // Detect divergences
-      if (this.history.length >= 3) {
-        const prev1 = this.history[this.history.length - 1];
-        const prev2 = this.history[this.history.length - 2];
-        const prev3 = this.history[this.history.length - 3];
-        
-        // Regular bullish divergence (price makes lower low, MACD makes higher low)
-        if (price < prev1.price && macdLine > prev1.macdLine) {
-          this.divergenceHistory.push({ type: 'bullish', time: Date.now() });
-        }
-        // Regular bearish divergence (price makes higher high, MACD makes lower high)
-        else if (price > prev1.price && macdLine < prev1.macdLine) {
-          this.divergenceHistory.push({ type: 'bearish', time: Date.now() });
-        }
-        // Hidden bullish divergence (price makes higher low, MACD makes lower low)
-        else if (price > prev1.price && macdLine < prev1.macdLine) {
-          this.divergenceHistory.push({ type: 'hidden_bullish', time: Date.now() });
-        }
-        // Hidden bearish divergence (price makes lower high, MACD makes higher high)
-        else if (price < prev1.price && macdLine > prev1.macdLine) {
-          this.divergenceHistory.push({ type: 'hidden_bearish', time: Date.now() });
-        }
-      }
-      
-      this.history.push({
-        price,
-        macdLine,
-        signalLine,
-        histogram,
-        direction: currentDirection,
-        momentum: histogram - (this.history.length > 0 ? this.history[this.history.length - 1].histogram : 0)
+  <script>
+    // Tab functionality
+    function showTab(tabId) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
       });
       
-      if (this.history.length > this.maxHistory) {
-        this.history.shift();
+      // Show the selected tab content
+      document.getElementById(tabId).classList.add('active');
+      
+      // If showing generator tab, initialize it
+      if (tabId === 'generator') {
+        initializeGenerator();
       }
-      
-      // Keep only recent divergences
-      this.divergenceHistory = this.divergenceHistory.filter(d => Date.now() - d.time < 60000);
-      
-      return {
-        macdLine,
-        signalLine,
-        histogram,
-        direction: this.getDirection(),
-        strength: this.calculateStrength(macdLine, signalLine),
-        momentum: this.history.length > 0 ? this.history[this.history.length - 1].momentum : 0,
-        divergences: [...this.divergenceHistory]
-      };
     }
-    
-    getDirection() {
-      if (this.history.length < 2) return 'neutral';
-      const current = this.history[this.history.length - 1].direction;
-      const prev = this.history[this.history.length - 2].direction;
-      return current === prev ? current : 'neutral';
-    }
-    
-    calculateStrength(macdLine, signalLine) {
-      const diff = Math.abs(macdLine - signalLine);
-      const maxDiff = Math.max(0.5, diff * 2);
-      return Math.min(diff / maxDiff, 1);
-    }
-  }
 
-  // Enhanced RSI with adaptive thresholds
-  class EnhancedRSI {
-    constructor(period = 14) {
-      this.period = period;
-      this.gains = [];
-      this.losses = [];
-      this.prevPrice = null;
-      this.rsi = null;
-      this.adaptiveOverbought = 70;
-      this.adaptiveOversold = 30;
-      this.priceHistory = [];
-    }
-    
-    update(price) {
-      if (this.prevPrice === null) {
-        this.prevPrice = price;
-        this.priceHistory.push(price);
-        return null;
-      }
-      
-      const change = price - this.prevPrice;
-      this.prevPrice = price;
-      this.priceHistory.push(price);
-      
-      if (this.priceHistory.length > 50) {
-        this.priceHistory.shift();
-      }
-      
-      // Adjust overbought/oversold levels based on market conditions
-      if (this.priceHistory.length >= 20) {
-        const recentPrices = this.priceHistory.slice(-20);
-        const maxPrice = Math.max(...recentPrices);
-        const minPrice = Math.min(...recentPrices);
-        const range = maxPrice - minPrice;
-        
-        if (range > 0) {
-          // In trending markets, widen the thresholds
-          const trendStrength = (maxPrice - minPrice) / (this.priceHistory[this.priceHistory.length - 20]);
-          this.adaptiveOverbought = Math.min(80, 70 + trendStrength * 20);
-          this.adaptiveOversold = Math.max(20, 30 - trendStrength * 20);
-        }
-      }
-      
-      const gain = change > 0 ? change : 0;
-      const loss = change < 0 ? -change : 0;
-      
-      this.gains.push(gain);
-      this.losses.push(loss);
-      
-      if (this.gains.length > this.period) {
-        this.gains.shift();
-        this.losses.shift();
-      }
-      
-      if (this.gains.length < this.period) {
-        return null;
-      }
-      
-      const avgGain = this.gains.reduce((sum, val) => sum + val, 0) / this.period;
-      const avgLoss = this.losses.reduce((sum, val) => sum + val, 0) / this.period;
-      
-      this.rsi = avgLoss === 0 ? 100 : 100 - (100 / (1 + (avgGain / avgLoss)));
-      return {
-        value: this.rsi,
-        isOverbought: this.rsi > this.adaptiveOverbought,
-        isOversold: this.rsi < this.adaptiveOversold,
-        overboughtLevel: this.adaptiveOverbought,
-        oversoldLevel: this.adaptiveOversold
-      };
-    }
-    
-    getCurrent() {
-      return this.rsi;
-    }
-  }
+    // Documentation content sections
+    const contentSections = {
+      overview: `
+        <h2>Overview</h2>
+        <p>This is a comprehensive higher/lower signal generator for volatility indices that combines multiple technical indicators with adaptive logic to generate trading signals. The strategy focuses on identifying high-probability entry points with clear risk parameters.</p>
+      `,
+      core: `
+        <h2>Core Components</h2>
+        <ul>
+          <li><strong>Enhanced MACD:</strong> Adaptive MACD with divergence detection</li>
+          <li><strong>Enhanced RSI:</strong> With dynamic overbought/oversold levels</li>
+          <li><strong>Enhanced Stochastic:</strong> With adaptive thresholds</li>
+          <li><strong>Enhanced ADX:</strong> For trend strength and direction</li>
+          <li><strong>Bollinger Bands:</strong> With adaptive width based on volatility</li>
+          <li><strong>VWMA (Volume Weighted MA):</strong> For volume confirmation</li>
+          <li><strong>Price Volume Trend:</strong> To assess volume momentum</li>
+          <li><strong>Pattern Recognition:</strong> Identifies common chart patterns</li>
+          <li><strong>Time Trend Analysis:</strong> Multi-timeframe confirmation</li>
+        </ul>
+      `,
+      signals: `
+        <h2>Signal Generation Logic</h2>
+        <h3>Confirmation System</h3>
+        <ul>
+          <li>Requires multiple consecutive confirmations (default 7 periods)</li>
+          <li>Each indicator contributes to a weighted confidence score</li>
+          <li>Signals only generated when confidence exceeds thresholds:
+            <ul>
+              <li>Weak threshold: 40% (<span class="highlight yellow">yellow signal</span>)</li>
+              <li>Strong threshold: 75% (<span class="highlight green">green/red signal</span>)</li>
+              <li>Very strong threshold: 90% (<span class="highlight cyan">cyan signal</span>)</li>
+            </ul>
+          </li>
+        </ul>
 
-  // Enhanced Stochastic with smoothing and adaptive levels
-  class EnhancedStochastic {
-    constructor(period = 14, smoothing = 3) {
-      this.period = period;
-      this.smoothing = smoothing;
-      this.highs = [];
-      this.lows = [];
-      this.closes = [];
-      this.kValues = [];
-      this.dValues = [];
-      this.adaptiveOverbought = 80;
-      this.adaptiveOversold = 20;
-    }
-    
-    update(price, high, low) {
-      this.closes.push(price);
-      this.highs.push(high);
-      this.lows.push(low);
-      
-      if (this.closes.length > this.period) {
-        this.closes.shift();
-        this.highs.shift();
-        this.lows.shift();
-      }
-      
-      if (this.closes.length < this.period) {
-        return { k: null, d: null };
-      }
-      
-      const highestHigh = Math.max(...this.highs);
-      const lowestLow = Math.min(...this.lows);
-      const currentClose = this.closes[this.closes.length - 1];
-      
-      // Calculate %K
-      let k = ((currentClose - lowestLow) / (highestHigh - lowestLow)) * 100;
-      
-      // Adaptive levels based on recent volatility
-      if (this.closes.length >= 20) {
-        const recentCloses = this.closes.slice(-20);
-        const maxClose = Math.max(...recentCloses);
-        const minClose = Math.min(...recentCloses);
-        const range = maxClose - minClose;
-        const avgClose = recentCloses.reduce((sum, val) => sum + val, 0) / recentCloses.length;
-        const volatility = range / avgClose;
-        
-        // Adjust thresholds based on volatility
-        this.adaptiveOverbought = Math.min(85, 80 + volatility * 100);
-        this.adaptiveOversold = Math.max(15, 20 - volatility * 100);
-      }
-      
-      this.kValues.push(k);
-      
-      if (this.kValues.length > this.smoothing) {
-        this.kValues.shift();
-      }
-      
-      let d = null;
-      if (this.kValues.length >= this.smoothing) {
-        d = this.kValues.reduce((sum, val) => sum + val, 0) / this.smoothing;
-        this.dValues.push(d);
-        
-        if (this.dValues.length > 2) {
-          this.dValues.shift();
-        }
-      }
-      
-      return {
-        k,
-        d,
-        isOverbought: k > this.adaptiveOverbought && (d === null || d > this.adaptiveOverbought),
-        isOversold: k < this.adaptiveOversold && (d === null || d < this.adaptiveOversold),
-        overboughtLevel: this.adaptiveOverbought,
-        oversoldLevel: this.adaptiveOversold
-      };
-    }
-  }
+        <h3>Signal Types</h3>
+        <ul>
+          <li><strong>Higher Signal (Bullish):</strong> Triggered when multiple indicators suggest upward momentum</li>
+          <li><strong>Lower Signal (Bearish):</strong> Triggered when multiple indicators suggest downward momentum</li>
+          <li><strong>Consolidation Signal:</strong> Detects ranging markets with low volatility</li>
+          <li><strong>Building Signal:</strong> Shows when indicators are aligning but haven't reached confirmation threshold</li>
+        </ul>
 
-  // Enhanced ADX with trend quality assessment
-  class EnhancedADX {
-    constructor(period = 14) {
-      this.period = period;
-      this.prevHigh = null;
-      this.prevLow = null;
-      this.prevClose = null;
-      this.trValues = [];
-      this.plusDMValues = [];
-      this.minusDMValues = [];
-      this.smoothedTR = 0;
-      this.smoothedPlusDM = 0;
-      this.smoothedMinusDM = 0;
-      this.adx = null;
-      this.plusDI = null;
-      this.minusDI = null;
-      this.trendQuality = 0; // 0-1 scale of trend quality
-    }
-    
-    update(high, low, close) {
-      if (this.prevHigh === null) {
-        this.prevHigh = high;
-        this.prevLow = low;
-        this.prevClose = close;
-        return null;
-      }
-      
-      // Calculate True Range
-      const tr = Math.max(
-        high - low,
-        Math.abs(high - this.prevClose),
-        Math.abs(low - this.prevClose)
-      );
-      
-      // Calculate Directional Movements
-      const upMove = high - this.prevHigh;
-      const downMove = this.prevLow - low;
-      
-      let plusDM = 0;
-      let minusDM = 0;
-      
-      if (upMove > downMove && upMove > 0) {
-        plusDM = upMove;
-      }
-      
-      if (downMove > upMove && downMove > 0) {
-        minusDM = downMove;
-      }
-      
-      // Smooth the values
-      if (this.trValues.length < this.period) {
-        this.trValues.push(tr);
-        this.plusDMValues.push(plusDM);
-        this.minusDMValues.push(minusDM);
-        
-        if (this.trValues.length === this.period) {
-          this.smoothedTR = this.trValues.reduce((sum, val) => sum + val, 0);
-          this.smoothedPlusDM = this.plusDMValues.reduce((sum, val) => sum + val, 0);
-          this.smoothedMinusDM = this.minusDMValues.reduce((sum, val) => sum + val, 0);
-        }
-      } else {
-        this.smoothedTR = this.smoothedTR - (this.smoothedTR / this.period) + tr;
-        this.smoothedPlusDM = this.smoothedPlusDM - (this.smoothedPlusDM / this.period) + plusDM;
-        this.smoothedMinusDM = this.smoothedMinusDM - (this.smoothedMinusDM / this.period) + minusDM;
-      }
-      
-      this.prevHigh = high;
-      this.prevLow = low;
-      this.prevClose = close;
-      
-      if (this.trValues.length < this.period) {
-        return null;
-      }
-      
-      // Calculate +DI and -DI
-      this.plusDI = (this.smoothedPlusDM / this.smoothedTR) * 100;
-      this.minusDI = (this.smoothedMinusDM / this.smoothedTR) * 100;
-      
-      // Calculate DX
-      const dx = (Math.abs(this.plusDI - this.minusDI) / (this.plusDI + this.minusDI)) * 100;
-      
-      // Calculate ADX
-      if (this.adx === null) {
-        this.adx = dx;
-      } else {
-        this.adx = ((this.adx * (this.period - 1)) + dx) / this.period;
-      }
-      
-      // Calculate trend quality (how consistent the trend is)
-      if (this.plusDI > this.minusDI) {
-        this.trendQuality = Math.min(1, (this.plusDI - this.minusDI) / 20);
-      } else {
-        this.trendQuality = Math.min(1, (this.minusDI - this.plusDI) / 20);
-      }
-      
-      return {
-        plusDI: this.plusDI,
-        minusDI: this.minusDI,
-        adx: this.adx,
-        trendStrength: this.adx > 25 ? (this.adx > 50 ? 'strong' : 'moderate') : 'weak',
-        trendDirection: this.plusDI > this.minusDI ? 'up' : 'down',
-        trendQuality: this.trendQuality,
-        diCross: Math.abs(this.plusDI - this.minusDI) < 5 ? 'crossing' : 'separated'
-      };
-    }
-  }
+        <h3>Weighting System</h3>
+        <ul>
+          <li>MACD: 20%</li>
+          <li>RSI: 15%</li>
+          <li>ADX: 20%</li>
+          <li>Bollinger Bands: 15%</li>
+          <li>Stochastic: 10%</li>
+          <li>Volume: 10%</li>
+          <li>Pattern Recognition: 10%</li>
+          <li>Time Trend: 10%</li>
+        </ul>
+      `,
+      rules: `
+        <h2>Trading Rules</h2>
+        <h3>Entry Rules</h3>
+        <ol>
+          <li>Wait for a confirmed signal (strong color)</li>
+          <li>Ensure confidence score is above 75%</li>
+          <li>Verify multiple timeframes agree (if time filter enabled)</li>
+          <li>Check for supporting volume (if volume weight > 0)</li>
+          <li>Enter when price touches the barrier after signal</li>
+        </ol>
 
-  // Enhanced Bollinger Bands with adaptive width
-  class EnhancedBollingerBands {
-    constructor(period = 20, multiplier = 2) {
-      this.period = period;
-      this.baseMultiplier = multiplier;
-      this.adaptiveMultiplier = multiplier;
-      this.prices = [];
-      this.volatilityHistory = [];
+        <h3>Exit Rules</h3>
+        <ul>
+          <li><strong>For Higher Signals:</strong> Take profit at Higher barrier; Stop loss if price hits Lower barrier</li>
+          <li><strong>For Lower Signals:</strong> Take profit at Lower barrier; Stop loss if price hits Higher barrier</li>
+          <li>Exit if signal reverses (opposite signal appears)</li>
+        </ul>
+
+        <h3>Risk Management</h3>
+        <ul>
+          <li>Default barriers provide natural risk/reward ratio</li>
+          <li>Confidence meter helps assess position sizing</li>
+          <li>Consolidation detection prevents trading in ranging markets</li>
+        </ul>
+      `,
+      custom: `
+        <h2>Customization Options</h2>
+        <ul>
+          <li>Adjust confirmation period (1–20)</li>
+          <li>Set strong/weak confidence thresholds</li>
+          <li>Modify volume and trend weights</li>
+          <li>Customize individual barriers per volatility index</li>
+          <li>Enable/disable pattern recognition</li>
+          <li>Toggle time filter</li>
+        </ul>
+      `,
+      strengths: `
+        <h2>Strengths & Limitations</h2>
+        <div class="flex-container">
+          <div class="card green">
+            <h3>Strengths</h3>
+            <ul>
+              <li>Multi-indicator confirmation reduces false signals</li>
+              <li>Adaptive logic works across different market conditions</li>
+              <li>Clear visual signals with confidence indicators</li>
+              <li>Comprehensive analysis of trend, momentum, and volume</li>
+            </ul>
+          </div>
+          <div class="card red">
+            <h3>Limitations</h3>
+            <ul>
+              <li>Requires sufficient historical data (50+ periods)</li>
+              <li>Works best on volatile instruments</li>
+              <li>Default barriers may need adjustment for different market conditions</li>
+            </ul>
+          </div>
+        </div>
+      `
+    };
+
+    function loadContent(section) {
+      const contentArea = document.getElementById("content-area");
+      contentArea.innerHTML = contentSections[section] || "<p>Content not found.</p>";
     }
+
+    // Signal Generator Code
+    let generatorInitialized = false;
     
-    update(price) {
-      this.prices.push(price);
+    function initializeGenerator() {
+      if (generatorInitialized) return;
+      generatorInitialized = true;
       
-      if (this.prices.length > this.period) {
-        this.prices.shift();
-      }
-      
-      if (this.prices.length < this.period) {
-        return null;
-      }
-      
-      // Calculate volatility
-      if (this.prices.length >= 2) {
-        const changes = [];
-        for (let i = 1; i < this.prices.length; i++) {
-          changes.push(Math.abs(this.prices[i] - this.prices[i-1]) / this.prices[i-1]);
-        }
-        const currentVolatility = changes.reduce((sum, val) => sum + val, 0) / changes.length;
-        this.volatilityHistory.push(currentVolatility);
-        if (this.volatilityHistory.length > 10) {
-          this.volatilityHistory.shift();
+      const volatilities = [
+        { symbol: '1HZ10V', name: 'Vol 10 (1s)', barrierHigher: -0.48, barrierLower: 0.48 },
+        { symbol: '1HZ25V', name: 'Vol 25 (1s)', barrierHigher: -80, barrierLower: 80 },
+        { symbol: '1HZ50V', name: 'Vol 50 (1s)', barrierHigher: -61, barrierLower: 61 },
+        { symbol: '1HZ75V', name: 'Vol 75 (1s)', barrierHigher: -2.6, barrierLower: 2.6 }
+      ];
+
+      // Default settings
+      let settings = {
+        confirmationPeriod: 7,
+        strongThreshold: 0.75,
+        weakThreshold: 0.4,
+        volumeWeight: 0.2,
+        trendWeight: 0.25,
+        patternRecognition: true,
+        timeFilter: true
+      };
+
+      const dataStore = {};
+      let ws = null;
+      const MIN_DATA_POINTS = 50;
+      const CONSOLIDATION_PERIOD = 15;
+      const CONSOLIDATION_RANGE_PERCENT = 0.5;
+      const PATTERN_LOOKBACK = 20;
+      const VERY_STRONG_THRESHOLD = 0.9;
+
+      // Enhanced EMA with smoothing and adaptive periods
+      class EnhancedEMA {
+        constructor(basePeriod = 12, adaptive = true) {
+          this.basePeriod = basePeriod;
+          this.adaptive = adaptive;
+          this.ema = null;
+          this.prevPrice = null;
+          this.volatility = 0;
+          this.volatilityPeriod = 10;
+          this.volatilityHistory = [];
         }
         
-        // Adjust multiplier based on volatility
-        const avgVolatility = this.volatilityHistory.reduce((sum, val) => sum + val, 0) / this.volatilityHistory.length;
-        this.adaptiveMultiplier = this.baseMultiplier * (1 + avgVolatility * 5);
-      }
-      
-      const sum = this.prices.reduce((a, b) => a + b, 0);
-      const sma = sum / this.period;
-      const variance = this.prices.reduce((a, b) => a + Math.pow(b - sma, 2), 0) / this.period;
-      const stdDev = Math.sqrt(variance);
-      
-      return {
-        upper: sma + (this.adaptiveMultiplier * stdDev),
-        middle: sma,
-        lower: sma - (this.adaptiveMultiplier * stdDev),
-        bandwidth: (this.adaptiveMultiplier * stdDev * 2) / sma * 100,
-        percentB: (price - (sma - this.adaptiveMultiplier * stdDev)) / (this.adaptiveMultiplier * stdDev * 2),
-        squeeze: (this.adaptiveMultiplier * stdDev * 2) / sma < 0.01
-      };
-    }
-  }
-
-  // Volume Weighted Moving Average
-  class VWMA {
-    constructor(period = 20) {
-      this.period = period;
-      this.priceVolumeSum = 0;
-      this.volumeSum = 0;
-      this.priceVolumeHistory = [];
-      this.volumeHistory = [];
-    }
-    
-    update(price, volume) {
-      this.priceVolumeSum += price * volume;
-      this.volumeSum += volume;
-      this.priceVolumeHistory.push(price * volume);
-      this.volumeHistory.push(volume);
-      
-      if (this.priceVolumeHistory.length > this.period) {
-        this.priceVolumeSum -= this.priceVolumeHistory.shift();
-        this.volumeSum -= this.volumeHistory.shift();
-      }
-      
-      if (this.volumeHistory.length < this.period) {
-        return null;
-      }
-      
-      return this.priceVolumeSum / this.volumeSum;
-    }
-  }
-
-  // Price-Volume Trend
-  class PriceVolumeTrend {
-    constructor() {
-      this.prevPrice = null;
-      this.pvt = 0;
-      this.pvtHistory = [];
-    }
-    
-    update(price, volume) {
-      if (this.prevPrice === null) {
-        this.prevPrice = price;
-        return null;
-      }
-      
-      const priceChange = price - this.prevPrice;
-      this.prevPrice = price;
-      
-      if (priceChange !== 0) {
-        const pvtChange = (priceChange / this.prevPrice) * volume;
-        this.pvt += pvtChange;
-      }
-      
-      this.pvtHistory.push(this.pvt);
-      if (this.pvtHistory.length > 20) {
-        this.pvtHistory.shift();
-      }
-      
-      return {
-        value: this.pvt,
-        direction: this.pvtHistory.length >= 2 ? 
-          (this.pvt > this.pvtHistory[this.pvtHistory.length - 2] ? 'up' : 'down') : 'neutral',
-        strength: this.pvtHistory.length >= 5 ? 
-          (this.pvt - Math.min(...this.pvtHistory)) / (Math.max(...this.pvtHistory) - Math.min(...this.pvtHistory)) : 0
-      };
-    }
-  }
-
-  // Pattern recognition for common chart patterns
-  class PatternRecognizer {
-    constructor(lookback = 20) {
-      this.lookback = lookback;
-      this.priceHistory = [];
-      this.highHistory = [];
-      this.lowHistory = [];
-    }
-    
-    update(price, high, low) {
-      this.priceHistory.push(price);
-      this.highHistory.push(high);
-      this.lowHistory.push(low);
-      
-      if (this.priceHistory.length > this.lookback) {
-        this.priceHistory.shift();
-        this.highHistory.shift();
-        this.lowHistory.shift();
-      }
-      
-      if (this.priceHistory.length < this.lookback) {
-        return null;
-      }
-      
-      // Detect patterns
-      const patterns = [];
-      
-      // 1. Double Top/Bottom
-      if (this.priceHistory.length >= 10) {
-        const recentPrices = this.priceHistory.slice(-10);
-        const recentHighs = this.highHistory.slice(-10);
-        const recentLows = this.lowHistory.slice(-10);
-        
-        const maxHigh = Math.max(...recentHighs);
-        const minLow = Math.min(...recentLows);
-        
-        // Double Top (bearish)
-        const peaks = [];
-        for (let i = 1; i < recentHighs.length - 1; i++) {
-          if (recentHighs[i] > recentHighs[i-1] && recentHighs[i] > recentHighs[i+1]) {
-            peaks.push(recentHighs[i]);
+        update(price) {
+          // Update volatility measure
+          if (this.prevPrice !== null) {
+            const priceChange = Math.abs(price - this.prevPrice) / this.prevPrice;
+            this.volatilityHistory.push(priceChange);
+            if (this.volatilityHistory.length > this.volatilityPeriod) {
+              this.volatilityHistory.shift();
+            }
+            this.volatility = this.volatilityHistory.reduce((sum, val) => sum + val, 0) / this.volatilityHistory.length;
           }
-        }
-        
-        if (peaks.length >= 2 && 
-            Math.abs(peaks[0] - peaks[1]) / peaks[0] < 0.01 && 
-            recentPrices[recentPrices.length-1] < recentPrices[recentPrices.length-10]) {
-          patterns.push({ name: 'Double Top', type: 'bearish', confidence: 0.7 });
-        }
-        
-        // Double Bottom (bullish)
-        const troughs = [];
-        for (let i = 1; i < recentLows.length - 1; i++) {
-          if (recentLows[i] < recentLows[i-1] && recentLows[i] < recentLows[i+1]) {
-            troughs.push(recentLows[i]);
+          this.prevPrice = price;
+          
+          // Adaptive period adjustment based on volatility
+          let period = this.basePeriod;
+          if (this.adaptive && this.volatility > 0) {
+            // More volatile markets use shorter periods
+            period = Math.max(5, Math.min(this.basePeriod, Math.round(this.basePeriod * (1 - this.volatility * 5))));
           }
+          
+          const multiplier = 2 / (period + 1);
+          this.ema = this.ema === null ? price : (price - this.ema) * multiplier + this.ema;
+          return this.ema;
         }
         
-        if (troughs.length >= 2 && 
-            Math.abs(troughs[0] - troughs[1]) / troughs[0] < 0.01 && 
-            recentPrices[recentPrices.length-1] > recentPrices[recentPrices.length-10]) {
-          patterns.push({ name: 'Double Bottom', type: 'bullish', confidence: 0.7 });
+        getCurrent() {
+          return this.ema;
         }
       }
-      
-      // 2. Head and Shoulders
-      if (this.priceHistory.length >= 15) {
-        const recentHighs = this.highHistory.slice(-15);
-        
-        // Find potential shoulders and head
-        const peaks = [];
-        for (let i = 1; i < recentHighs.length - 1; i++) {
-          if (recentHighs[i] > recentHighs[i-1] && recentHighs[i] > recentHighs[i+1]) {
-            peaks.push({ index: i, value: recentHighs[i] });
-          }
+
+      // Enhanced MACD with adaptive parameters
+      class EnhancedMACD {
+        constructor() {
+          this.fastEMA = new EnhancedEMA(12, true);
+          this.slowEMA = new EnhancedEMA(26, true);
+          this.signalEMA = new EnhancedEMA(9, true);
+          this.history = [];
+          this.maxHistory = 15;
+          this.divergenceHistory = [];
         }
         
-        if (peaks.length >= 3) {
-          // Check if middle peak is higher than others (head)
-          if (peaks[1].value > peaks[0].value && peaks[1].value > peaks[2].value) {
-            // Check if shoulders are roughly equal
-            if (Math.abs(peaks[0].value - peaks[2].value) / peaks[0].value < 0.01) {
-              // Check neckline break
-              const necklineStart = this.lowHistory[this.lowHistory.length - 15 + peaks[0].index];
-              const necklineEnd = this.lowHistory[this.lowHistory.length - 15 + peaks[2].index];
-              const currentPrice = this.priceHistory[this.priceHistory.length-1];
-              
-              if (currentPrice < necklineStart && currentPrice < necklineEnd) {
-                patterns.push({ name: 'Head and Shoulders', type: 'bearish', confidence: 0.8 });
-              }
+        update(price) {
+          const fast = this.fastEMA.update(price);
+          const slow = this.slowEMA.update(price);
+          const macdLine = fast - slow;
+          const signalLine = this.signalEMA.update(macdLine);
+          const histogram = macdLine - signalLine;
+          
+          // Track direction changes
+          const currentDirection = macdLine > signalLine ? 'up' : 'down';
+          const prevDirection = this.history.length > 0 ? this.history[this.history.length - 1].direction : null;
+          
+          // Detect divergences
+          if (this.history.length >= 3) {
+            const prev1 = this.history[this.history.length - 1];
+            const prev2 = this.history[this.history.length - 2];
+            const prev3 = this.history[this.history.length - 3];
+            
+            // Regular bullish divergence (price makes lower low, MACD makes higher low)
+            if (price < prev1.price && macdLine > prev1.macdLine) {
+              this.divergenceHistory.push({ type: 'bullish', time: Date.now() });
+            }
+            // Regular bearish divergence (price makes higher high, MACD makes lower high)
+            else if (price > prev1.price && macdLine < prev1.macdLine) {
+              this.divergenceHistory.push({ type: 'bearish', time: Date.now() });
+            }
+            // Hidden bullish divergence (price makes higher low, MACD makes lower low)
+            else if (price > prev1.price && macdLine < prev1.macdLine) {
+              this.divergenceHistory.push({ type: 'hidden_bullish', time: Date.now() });
+            }
+            // Hidden bearish divergence (price makes lower high, MACD makes higher high)
+            else if (price < prev1.price && macdLine > prev1.macdLine) {
+              this.divergenceHistory.push({ type: 'hidden_bearish', time: Date.now() });
             }
           }
-        }
-      }
-      
-      // 3. Triangle patterns
-      if (this.priceHistory.length >= 12) {
-        const upperTrend = this.calculateTrend(this.highHistory.slice(-12), false);
-        const lowerTrend = this.calculateTrend(this.lowHistory.slice(-12), true);
-        
-        // Symmetrical triangle (both trendlines converging)
-        if (upperTrend.slope < 0 && lowerTrend.slope > 0) {
-          patterns.push({ name: 'Symmetrical Triangle', type: 'neutral', confidence: 0.6 });
-        }
-        // Ascending triangle (flat top, rising bottom)
-        else if (Math.abs(upperTrend.slope) < 0.001 && lowerTrend.slope > 0) {
-          patterns.push({ name: 'Ascending Triangle', type: 'bullish', confidence: 0.7 });
-        }
-        // Descending triangle (flat bottom, falling top)
-        else if (Math.abs(lowerTrend.slope) < 0.001 && upperTrend.slope < 0) {
-          patterns.push({ name: 'Descending Triangle', type: 'bearish', confidence: 0.7 });
-        }
-      }
-      
-      // Return the highest confidence pattern
-      if (patterns.length > 0) {
-        patterns.sort((a, b) => b.confidence - a.confidence);
-        return patterns[0];
-      }
-      
-      return null;
-    }
-    
-    calculateTrend(points, isSupport) {
-      const n = points.length;
-      let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
-      
-      for (let i = 0; i < n; i++) {
-        sumX += i;
-        sumY += points[i];
-        sumXY += i * points[i];
-        sumXX += i * i;
-      }
-      
-      const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
-      const intercept = (sumY - slope * sumX) / n;
-      
-      // For support/resistance, we want the most recent point to be the most relevant
-      const adjustedIntercept = isSupport ? 
-        Math.min(...points) : 
-        Math.max(...points);
-      
-      return {
-        slope,
-        intercept: adjustedIntercept,
-        value: slope * (n-1) + intercept
-      };
-    }
-  }
-
-  // Time-based trend analyzer
-  class TimeTrendAnalyzer {
-    constructor() {
-      this.timeframes = {
-        'short': { period: 5, data: [] },
-        'medium': { period: 15, data: [] },
-        'long': { period: 30, data: [] }
-      };
-    }
-    
-    update(price) {
-      const trends = {};
-      
-      for (const [key, tf] of Object.entries(this.timeframes)) {
-        tf.data.push(price);
-        
-        if (tf.data.length > tf.period) {
-          tf.data.shift();
-        }
-        
-        if (tf.data.length >= tf.period) {
-          const sma = tf.data.reduce((sum, val) => sum + val, 0) / tf.data.length;
-          const currentPrice = tf.data[tf.data.length - 1];
           
-          trends[key] = {
-            direction: currentPrice > sma ? 'up' : 'down',
-            strength: Math.abs(currentPrice - sma) / sma,
-            angle: this.calculateAngle(tf.data)
+          this.history.push({
+            price,
+            macdLine,
+            signalLine,
+            histogram,
+            direction: currentDirection,
+            momentum: histogram - (this.history.length > 0 ? this.history[this.history.length - 1].histogram : 0)
+          });
+          
+          if (this.history.length > this.maxHistory) {
+            this.history.shift();
+          }
+          
+          // Keep only recent divergences
+          this.divergenceHistory = this.divergenceHistory.filter(d => Date.now() - d.time < 60000);
+          
+          return {
+            macdLine,
+            signalLine,
+            histogram,
+            direction: this.getDirection(),
+            strength: this.calculateStrength(macdLine, signalLine),
+            momentum: this.history.length > 0 ? this.history[this.history.length - 1].momentum : 0,
+            divergences: [...this.divergenceHistory]
+          };
+        }
+        
+        getDirection() {
+          if (this.history.length < 2) return 'neutral';
+          const current = this.history[this.history.length - 1].direction;
+          const prev = this.history[this.history.length - 2].direction;
+          return current === prev ? current : 'neutral';
+        }
+        
+        calculateStrength(macdLine, signalLine) {
+          const diff = Math.abs(macdLine - signalLine);
+          const maxDiff = Math.max(0.5, diff * 2);
+          return Math.min(diff / maxDiff, 1);
+        }
+      }
+
+      // Enhanced RSI with adaptive thresholds
+      class EnhancedRSI {
+        constructor(period = 14) {
+          this.period = period;
+          this.gains = [];
+          this.losses = [];
+          this.prevPrice = null;
+          this.rsi = null;
+          this.adaptiveOverbought = 70;
+          this.adaptiveOversold = 30;
+          this.priceHistory = [];
+        }
+        
+        update(price) {
+          if (this.prevPrice === null) {
+            this.prevPrice = price;
+            this.priceHistory.push(price);
+            return null;
+          }
+          
+          const change = price - this.prevPrice;
+          this.prevPrice = price;
+          this.priceHistory.push(price);
+          
+          if (this.priceHistory.length > 50) {
+            this.priceHistory.shift();
+          }
+          
+          // Adjust overbought/oversold levels based on market conditions
+          if (this.priceHistory.length >= 20) {
+            const recentPrices = this.priceHistory.slice(-20);
+            const maxPrice = Math.max(...recentPrices);
+            const minPrice = Math.min(...recentPrices);
+            const range = maxPrice - minPrice;
+            
+            if (range > 0) {
+              // In trending markets, widen the thresholds
+              const trendStrength = (maxPrice - minPrice) / (this.priceHistory[this.priceHistory.length - 20]);
+              this.adaptiveOverbought = Math.min(80, 70 + trendStrength * 20);
+              this.adaptiveOversold = Math.max(20, 30 - trendStrength * 20);
+            }
+          }
+          
+          const gain = change > 0 ? change : 0;
+          const loss = change < 0 ? -change : 0;
+          
+          this.gains.push(gain);
+          this.losses.push(loss);
+          
+          if (this.gains.length > this.period) {
+            this.gains.shift();
+            this.losses.shift();
+          }
+          
+          if (this.gains.length < this.period) {
+            return null;
+          }
+          
+          const avgGain = this.gains.reduce((sum, val) => sum + val, 0) / this.period;
+          const avgLoss = this.losses.reduce((sum, val) => sum + val, 0) / this.period;
+          
+          this.rsi = avgLoss === 0 ? 100 : 100 - (100 / (1 + (avgGain / avgLoss)));
+          return {
+            value: this.rsi,
+            isOverbought: this.rsi > this.adaptiveOverbought,
+            isOversold: this.rsi < this.adaptiveOversold,
+            overboughtLevel: this.adaptiveOverbought,
+            oversoldLevel: this.adaptiveOversold
+          };
+        }
+        
+        getCurrent() {
+          return this.rsi;
+        }
+      }
+
+      // Enhanced Stochastic with smoothing and adaptive levels
+      class EnhancedStochastic {
+        constructor(period = 14, smoothing = 3) {
+          this.period = period;
+          this.smoothing = smoothing;
+          this.highs = [];
+          this.lows = [];
+          this.closes = [];
+          this.kValues = [];
+          this.dValues = [];
+          this.adaptiveOverbought = 80;
+          this.adaptiveOversold = 20;
+        }
+        
+        update(price, high, low) {
+          this.closes.push(price);
+          this.highs.push(high);
+          this.lows.push(low);
+          
+          if (this.closes.length > this.period) {
+            this.closes.shift();
+            this.highs.shift();
+            this.lows.shift();
+          }
+          
+          if (this.closes.length < this.period) {
+            return { k: null, d: null };
+          }
+          
+          const highestHigh = Math.max(...this.highs);
+          const lowestLow = Math.min(...this.lows);
+          const currentClose = this.closes[this.closes.length - 1];
+          
+          // Calculate %K
+          let k = ((currentClose - lowestLow) / (highestHigh - lowestLow)) * 100;
+          
+          // Adaptive levels based on recent volatility
+          if (this.closes.length >= 20) {
+            const recentCloses = this.closes.slice(-20);
+            const maxClose = Math.max(...recentCloses);
+            const minClose = Math.min(...recentCloses);
+            const range = maxClose - minClose;
+            const avgClose = recentCloses.reduce((sum, val) => sum + val, 0) / recentCloses.length;
+            const volatility = range / avgClose;
+            
+            // Adjust thresholds based on volatility
+            this.adaptiveOverbought = Math.min(85, 80 + volatility * 100);
+            this.adaptiveOversold = Math.max(15, 20 - volatility * 100);
+          }
+          
+          this.kValues.push(k);
+          
+          if (this.kValues.length > this.smoothing) {
+            this.kValues.shift();
+          }
+          
+          let d = null;
+          if (this.kValues.length >= this.smoothing) {
+            d = this.kValues.reduce((sum, val) => sum + val, 0) / this.smoothing;
+            this.dValues.push(d);
+            
+            if (this.dValues.length > 2) {
+              this.dValues.shift();
+            }
+          }
+          
+          return {
+            k,
+            d,
+            isOverbought: k > this.adaptiveOverbought && (d === null || d > this.adaptiveOverbought),
+            isOversold: k < this.adaptiveOversold && (d === null || d < this.adaptiveOversold),
+            overboughtLevel: this.adaptiveOverbought,
+            oversoldLevel: this.adaptiveOversold
           };
         }
       }
-      
-      return trends;
-    }
-    
-    calculateAngle(points) {
-      if (points.length < 2) return 0;
-      
-      const firstPrice = points[0];
-      const lastPrice = points[points.length - 1];
-      const priceChange = lastPrice - firstPrice;
-      const percentChange = priceChange / firstPrice;
-      
-      // Convert to "degrees" (arbitrary scale)
-      return percentChange * 100;
-    }
-  }
 
-  function buildCards() {
-    const container = document.getElementById('cards-container');
-    volatilities.forEach(v => {
-      const card = document.createElement('div');
-      card.className = 'vol-card';
-      card.innerHTML = `
-        <div class="vol-title">${v.name}</div>
-        <div class="data-grid">
-          <div class="data-item"><span class="data-label">Price:</span><span id="price-${v.symbol}" class="indicator-value">-</span></div>
-          <div class="data-item"><span class="data-label">MACD:</span><span id="macd-${v.symbol}" class="indicator-value">-</span></div>
-          <div class="data-item"><span class="data-label">Signal:</span><span id="signal-${v.symbol}" class="indicator-value">-</span></div>
-          <div class="data-item"><span class="data-label">Hist:</span><span id="histogram-${v.symbol}" class="indicator-value">-</span></div>
-          <div class="data-item"><span class="data-label">RSI14:</span><span id="rsi-${v.symbol}" class="indicator-value">-</span></div>
-          <div class="data-item"><span class="data-label">ADX:</span><span id="adx-${v.symbol}" class="indicator-value">-</span></div>
-          <div class="data-item"><span class="data-label">BB %B:</span><span id="bbPercent-${v.symbol}" class="indicator-value">-</span></div>
-          <div class="data-item"><span class="data-label">Stoch:</span><span id="stoch-${v.symbol}" class="indicator-value">-</span></div>
-          <div class="data-item"><span class="data-label">Volume:</span><span id="volume-${v.symbol}" class="indicator-value">-</span></div>
-        </div>
-        
-        <div class="indicator-row">
-          <span class="indicator-name">MACD Strength</span>
-          <span class="indicator-strength" id="macd-strength-${v.symbol}">-</span>
-        </div>
-        <div id="macd-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
-        
-        <div class="indicator-row">
-          <span class="indicator-name">Trend Strength</span>
-          <span class="indicator-strength" id="trend-strength-${v.symbol}">-</span>
-        </div>
-        <div id="trend-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
-        
-        <div class="indicator-row">
-          <span class="indicator-name">Volume Trend</span>
-          <span class="indicator-strength" id="volume-trend-${v.symbol}">-</span>
-        </div>
-        <div id="volume-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
-        
-        <div class="barrier-inputs">
-          <div class="barrier-group">
-            <span class="barrier-label">HIGHER</span>
-            <input type="number" step="0.01" class="barrier-input" id="barrier-higher-${v.symbol}" value="${v.barrierHigher}" />
-          </div>
-          <div class="barrier-group">
-            <span class="barrier-label">LOWER</span>
-            <input type="number" step="0.01" class="barrier-input" id="barrier-lower-${v.symbol}" value="${v.barrierLower}" />
-          </div>
-        </div>
-        
-        <div class="confidence-meter">
-          <div id="confidence-fill-${v.symbol}" class="confidence-fill"></div>
-        </div>
-        <div id="confidence-label-${v.symbol}" class="confidence-label">Confidence: 0%</div>
-        
-        <div id="signal-text-${v.symbol}" class="signal-area signal-waiting">ANALYZING</div>
-        <div id="countdown-${v.symbol}" class="countdown"></div>
-        <div id="signal-explanation-${v.symbol}" class="signal-explanation"></div>
-        <div id="pattern-indicator-${v.symbol}" class="pattern-indicator pattern-neutral"></div>
-      `;
-      container.appendChild(card);
-
-      dataStore[v.symbol] = {
-        closes: [],
-        highs: [],
-        lows: [],
-        volumes: [],
-        macdCalc: new EnhancedMACD(),
-        rsiCalc: new EnhancedRSI(14),
-        stochCalc: new EnhancedStochastic(14, 3),
-        adxCalc: new EnhancedADX(14),
-        bbCalc: new EnhancedBollingerBands(20, 2),
-        vwmaCalc: new VWMA(20),
-        pvtCalc: new PriceVolumeTrend(),
-        patternCalc: new PatternRecognizer(PATTERN_LOOKBACK),
-        timeTrendCalc: new TimeTrendAnalyzer(),
-        confirmationCount: 0,
-        lastSignal: null,
-        consolidationCount: 0,
-        pattern: null,
-        timeTrends: {},
-        ui: {
-          price: card.querySelector(`#price-${v.symbol}`),
-          macdLine: card.querySelector(`#macd-${v.symbol}`),
-          signalLine: card.querySelector(`#signal-${v.symbol}`),
-          histogram: card.querySelector(`#histogram-${v.symbol}`),
-          rsi: card.querySelector(`#rsi-${v.symbol}`),
-          adx: card.querySelector(`#adx-${v.symbol}`),
-          bbPercent: card.querySelector(`#bbPercent-${v.symbol}`),
-          stoch: card.querySelector(`#stoch-${v.symbol}`),
-          volume: card.querySelector(`#volume-${v.symbol}`),
-          signalText: card.querySelector(`#signal-text-${v.symbol}`),
-          countdown: card.querySelector(`#countdown-${v.symbol}`),
-          macdStrength: card.querySelector(`#macd-strength-${v.symbol}`),
-          macdBar: card.querySelector(`#macd-bar-${v.symbol}`),
-          trendStrength: card.querySelector(`#trend-strength-${v.symbol}`),
-          trendBar: card.querySelector(`#trend-bar-${v.symbol}`),
-          volumeTrend: card.querySelector(`#volume-trend-${v.symbol}`),
-          volumeBar: card.querySelector(`#volume-bar-${v.symbol}`),
-          explanation: card.querySelector(`#signal-explanation-${v.symbol}`),
-          confidenceFill: card.querySelector(`#confidence-fill-${v.symbol}`),
-          confidenceLabel: card.querySelector(`#confidence-label-${v.symbol}`),
-          patternIndicator: card.querySelector(`#pattern-indicator-${v.symbol}`)
+      // Enhanced ADX with trend quality assessment
+      class EnhancedADX {
+        constructor(period = 14) {
+          this.period = period;
+          this.prevHigh = null;
+          this.prevLow = null;
+          this.prevClose = null;
+          this.trValues = [];
+          this.plusDMValues = [];
+          this.minusDMValues = [];
+          this.smoothedTR = 0;
+          this.smoothedPlusDM = 0;
+          this.smoothedMinusDM = 0;
+          this.adx = null;
+          this.plusDI = null;
+          this.minusDI = null;
+          this.trendQuality = 0; // 0-1 scale of trend quality
         }
-      };
-    });
-  }
-
-  function connectWebSocket() {
-    updateStatus('connecting', 'Connecting...');
-    if(ws) ws.close();
-    
-    ws = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089');
-    ws.onopen = () => {
-      updateStatus('connected', 'Connected');
-      volatilities.forEach(v => ws.send(JSON.stringify({ ticks: v.symbol, subscribe: 1 })));
-    };
-    ws.onmessage = e => {
-      try {
-        const data = JSON.parse(e.data);
-        if(data.msg_type === 'tick') handleTick(data.tick);
-      } catch(e) {
-        console.error('Error parsing message:', e);
-      }
-    };
-    ws.onclose = () => {
-      updateStatus('disconnected', 'Disconnected');
-      setTimeout(connectWebSocket, 3000);
-    };
-    ws.onerror = (e) => {
-      console.error('WebSocket error:', e);
-      ws.close();
-    };
-  }
-
-  function updateStatus(status, text) {
-    const el = document.getElementById('connection-status');
-    el.className = `connection-status ${status}`;
-    el.textContent = text;
-  }
-
-  function calculateSMA(prices, period) {
-    if (prices.length < period) return null;
-    return prices.slice(-period).reduce((sum, price) => sum + price, 0) / period;
-  }
-
-  function checkConsolidation(data) {
-    if (data.closes.length < CONSOLIDATION_PERIOD) return false;
-    
-    // Get the recent price range
-    const recentCloses = data.closes.slice(-CONSOLIDATION_PERIOD);
-    const recentHighs = data.highs.slice(-CONSOLIDATION_PERIOD);
-    const recentLows = data.lows.slice(-CONSOLIDATION_PERIOD);
-    
-    const maxHigh = Math.max(...recentHighs);
-    const minLow = Math.min(...recentLows);
-    const range = maxHigh - minLow;
-    const avgPrice = recentCloses.reduce((sum, p) => sum + p, 0) / recentCloses.length;
-    const rangePercent = (range / avgPrice) * 100;
-    
-    // Check if price range is small enough
-    if (rangePercent > CONSOLIDATION_RANGE_PERCENT) return false;
-    
-    // Check indicators for neutral conditions
-    const macd = data.macdCalc;
-    const rsi = data.rsiCalc.getCurrent();
-    const adx = data.adxCalc;
-    const bb = data.bbCalc;
-    const stoch = data.stochCalc;
-    
-    // MACD histogram near zero
-    if (Math.abs(macd.histogram) > 0.5) return false;
-    
-    // RSI in middle range
-    if (rsi < 40 || rsi > 60) return false;
-    
-    // ADX shows weak trend
-    if (adx.adx > 20) return false;
-    
-    // Bollinger Bands %B near middle
-    const bbPercent = bb.percentB;
-    if (bbPercent < 0.4 || bbPercent > 0.6) return false;
-    
-    // Stochastic in middle range
-    if (stoch.k < 40 || stoch.k > 60 || stoch.d < 40 || stoch.d > 60) return false;
-    
-    return true;
-  }
-
-  function handleTick(tick) {
-    const { symbol, quote } = tick;
-    const d = dataStore[symbol];
-    if(!d) return;
-
-    const price = parseFloat(quote);
-    // For volatility indices, we'll use the same value for high/low/close
-    const high = price;
-    const low = price;
-    // Simulate volume (since we don't have real volume data for these indices)
-    const volume = 1000 + Math.round(Math.random() * 5000);
-    
-    d.closes.push(price);
-    d.highs.push(high);
-    d.lows.push(low);
-    d.volumes.push(volume);
-    
-    // Keep only recent data to manage memory
-    if(d.closes.length > 200) {
-      d.closes.shift();
-      d.highs.shift();
-      d.lows.shift();
-      d.volumes.shift();
-    }
-
-    // Update UI with current price and volume
-    d.ui.price.textContent = price.toFixed(3);
-    d.ui.volume.textContent = volume.toFixed(0);
-    
-    // Update MACD indicators
-    const macd = d.macdCalc.update(price);
-    d.ui.macdLine.textContent = macd.macdLine.toFixed(3);
-    d.ui.signalLine.textContent = macd.signalLine.toFixed(3);
-    d.ui.histogram.textContent = macd.histogram.toFixed(3);
-    
-    // Update MACD strength visualization
-    if (macd.strength !== undefined) {
-      d.ui.macdStrength.textContent = `${Math.round(macd.strength * 100)}%`;
-      d.ui.macdBar.className = `indicator-bar ${macd.direction === 'up' ? 'positive-bar' : 'negative-bar'}`;
-      d.ui.macdBar.style.width = `${macd.strength * 100}%`;
-    }
-    
-    // Update RSI
-    const rsi = d.rsiCalc.update(price);
-    if (rsi !== null) {
-      d.ui.rsi.textContent = rsi.value.toFixed(1);
-      if (rsi.isOverbought) d.ui.rsi.style.color = '#f00';
-      else if (rsi.isOversold) d.ui.rsi.style.color = '#0f0';
-      else d.ui.rsi.style.color = 'white';
-    }
-    
-    // Update Stochastic Oscillator
-    const stoch = d.stochCalc.update(price, high, low);
-    if (stoch.k !== null && stoch.d !== null) {
-      d.ui.stoch.textContent = `${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)}`;
-      if (stoch.isOverbought) d.ui.stoch.style.color = '#f00';
-      else if (stoch.isOversold) d.ui.stoch.style.color = '#0f0';
-      else d.ui.stoch.style.color = 'white';
-    }
-    
-    // Update ADX
-    const adx = d.adxCalc.update(high, low, price);
-    if (adx !== null) {
-      d.ui.adx.textContent = `${adx.adx.toFixed(1)} (${adx.trendDirection})`;
-      
-      // Update trend strength visualization
-      const trendStrengthValue = Math.min(adx.adx / 50, 1); // Cap at 50 for visualization
-      d.ui.trendStrength.textContent = `${adx.trendStrength}`;
-      d.ui.trendBar.className = `indicator-bar ${adx.trendDirection === 'up' ? 'positive-bar' : 'negative-bar'}`;
-      d.ui.trendBar.style.width = `${trendStrengthValue * 100}%`;
-    }
-    
-    // Update Bollinger Bands
-    const bb = d.bbCalc.update(price);
-    if (bb !== null) {
-      d.ui.bbPercent.textContent = bb.percentB.toFixed(2);
-      if (bb.percentB > 0.8) d.ui.bbPercent.style.color = '#f00';
-      else if (bb.percentB < 0.2) d.ui.bbPercent.style.color = '#0f0';
-      else d.ui.bbPercent.style.color = 'white';
-    }
-    
-    // Update Volume Weighted MA
-    const vwma = d.vwmaCalc.update(price, volume);
-    
-    // Update Price Volume Trend
-    const pvt = d.pvtCalc.update(price, volume);
-    if (pvt !== null) {
-      d.ui.volumeTrend.textContent = pvt.direction.toUpperCase();
-      d.ui.volumeBar.className = `indicator-bar ${pvt.direction === 'up' ? 'positive-bar' : 'negative-bar'}`;
-      d.ui.volumeBar.style.width = `${pvt.strength * 100}%`;
-    }
-    
-    // Update Pattern Recognition
-    d.pattern = d.patternCalc.update(price, high, low);
-    if (d.pattern) {
-      d.ui.patternIndicator.textContent = d.pattern.name;
-      d.ui.patternIndicator.className = `pattern-indicator pattern-${d.pattern.type}`;
-    } else {
-      d.ui.patternIndicator.textContent = 'No Pattern';
-      d.ui.patternIndicator.className = 'pattern-indicator pattern-neutral';
-    }
-    
-    // Update Time-based Trends
-    d.timeTrends = d.timeTrendCalc.update(price);
-    
-    // Check for consolidation first
-    const isConsolidating = checkConsolidation(d);
-    if (isConsolidating) {
-      d.consolidationCount++;
-      if (d.consolidationCount >= 3) { // Require 3 consecutive confirmations
-        d.ui.signalText.textContent = 'CONSOLIDATION';
-        d.ui.signalText.className = 'signal-area signal-consolidation';
-        d.ui.countdown.textContent = 'Market ranging - wait for breakout';
-        d.ui.explanation.textContent = 'Price moving sideways, indicators neutral - wait for breakout direction';
-        d.ui.confidenceFill.style.width = '0%';
-        d.ui.confidenceLabel.textContent = 'Confidence: 0%';
-        return; // Skip other signal processing during consolidation
-      }
-    } else {
-      d.consolidationCount = 0;
-    }
-    
-    // Only generate signals if we have enough data
-    if (d.closes.length >= MIN_DATA_POINTS && rsi !== null && adx !== null && bb !== null && stoch.k !== null) {
-      // Calculate signal strength (0-1)
-      let signalStrength = 0;
-      let signalDirection = null;
-      let confirmationReasons = [];
-      let confidenceScore = 0;
-      let totalWeight = 0;
-      
-      // 1. MACD confirmation (20% weight)
-      if (macd.direction === 'up' && macd.histogram > 0) {
-        const macdWeight = 0.2 * macd.strength;
-        signalStrength += macdWeight;
-        confidenceScore += macdWeight * macd.strength;
-        totalWeight += 0.2;
-        signalDirection = 'up';
-        confirmationReasons.push(`MACD bullish (${Math.round(macd.strength * 100)}%)`);
         
-        // Check for divergences
-        if (macd.divergences.some(d => d.type.includes('bullish'))) {
-          signalStrength += 0.05;
-          confidenceScore += 0.05;
-          confirmationReasons.push('Bullish divergence');
-        }
-      } else if (macd.direction === 'down' && macd.histogram < 0) {
-        const macdWeight = 0.2 * macd.strength;
-        signalStrength += macdWeight;
-        confidenceScore += macdWeight * macd.strength;
-        totalWeight += 0.2;
-        signalDirection = 'down';
-        confirmationReasons.push(`MACD bearish (${Math.round(macd.strength * 100)}%)`);
-        
-        // Check for divergences
-        if (macd.divergences.some(d => d.type.includes('bearish'))) {
-          signalStrength += 0.05;
-          confidenceScore += 0.05;
-          confirmationReasons.push('Bearish divergence');
-        }
-      }
-      
-      // 2. RSI confirmation (15% weight)
-      if (rsi.isOversold) {
-        const rsiWeight = 0.15;
-        signalStrength += rsiWeight;
-        confidenceScore += rsiWeight * (1 - (rsi.value / rsi.oversoldLevel));
-        totalWeight += 0.15;
-        signalDirection = 'up';
-        confirmationReasons.push(`RSI oversold (${rsi.value.toFixed(1)})`);
-      } else if (rsi.isOverbought) {
-        const rsiWeight = 0.15;
-        signalStrength += rsiWeight;
-        confidenceScore += rsiWeight * (1 - ((rsi.overboughtLevel - rsi.value) / rsi.overboughtLevel));
-        totalWeight += 0.15;
-        signalDirection = 'down';
-        confirmationReasons.push(`RSI overbought (${rsi.value.toFixed(1)})`);
-      } else if (rsi.value < 50 && signalDirection === 'up') {
-        const rsiWeight = 0.05;
-        signalStrength += rsiWeight;
-        confidenceScore += rsiWeight * 0.5;
-        totalWeight += 0.05;
-        confirmationReasons.push(`RSI below mid (${rsi.value.toFixed(1)})`);
-      } else if (rsi.value > 50 && signalDirection === 'down') {
-        const rsiWeight = 0.05;
-        signalStrength += rsiWeight;
-        confidenceScore += rsiWeight * 0.5;
-        totalWeight += 0.05;
-        confirmationReasons.push(`RSI above mid (${rsi.value.toFixed(1)})`);
-      }
-      
-      // 3. ADX trend confirmation (20% weight)
-      if (adx.trendStrength !== 'weak') {
-        const adxWeight = 0.2 * (adx.adx / 50);
-        signalStrength += adxWeight;
-        confidenceScore += adxWeight * adx.trendQuality;
-        totalWeight += 0.2;
-        
-        if (adx.trendDirection === 'up' && signalDirection !== 'down') {
-          signalDirection = 'up';
-          confirmationReasons.push(`ADX ${adx.trendStrength} uptrend (${adx.adx.toFixed(1)})`);
-        } else if (adx.trendDirection === 'down' && signalDirection !== 'up') {
-          signalDirection = 'down';
-          confirmationReasons.push(`ADX ${adx.trendStrength} downtrend (${adx.adx.toFixed(1)})`);
-        }
-      }
-      
-      // 4. Bollinger Bands confirmation (15% weight)
-      if (bb.percentB < 0.2) {
-        const bbWeight = 0.15;
-        signalStrength += bbWeight;
-        confidenceScore += bbWeight * (1 - (bb.percentB / 0.2));
-        totalWeight += 0.15;
-        signalDirection = 'up';
-        confirmationReasons.push(`BB lower band (${bb.percentB.toFixed(2)})`);
-      } else if (bb.percentB > 0.8) {
-        const bbWeight = 0.15;
-        signalStrength += bbWeight;
-        confidenceScore += bbWeight * (1 - ((1 - bb.percentB) / 0.2));
-        totalWeight += 0.15;
-        signalDirection = 'down';
-        confirmationReasons.push(`BB upper band (${bb.percentB.toFixed(2)})`);
-      } else if (bb.squeeze) {
-        // Bollinger Band squeeze (potential breakout coming)
-        signalStrength += 0.05;
-        confidenceScore += 0.05;
-        confirmationReasons.push('BB squeeze (potential breakout)');
-      }
-      
-      // 5. Stochastic confirmation (10% weight)
-      if (stoch.isOversold) {
-        const stochWeight = 0.1;
-        signalStrength += stochWeight;
-        confidenceScore += stochWeight * (1 - (stoch.k / stoch.oversoldLevel));
-        totalWeight += 0.1;
-        signalDirection = 'up';
-        confirmationReasons.push(`Stoch oversold (${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)})`);
-      } else if (stoch.isOverbought) {
-        const stochWeight = 0.1;
-        signalStrength += stochWeight;
-        confidenceScore += stochWeight * (1 - ((stoch.overboughtLevel - stoch.k) / stoch.overboughtLevel));
-        totalWeight += 0.1;
-        signalDirection = 'down';
-        confirmationReasons.push(`Stoch overbought (${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)})`);
-      }
-      
-      // 6. Volume confirmation (10% weight from settings)
-      if (pvt !== null) {
-        const volumeWeight = settings.volumeWeight / 100;
-        if (pvt.direction === signalDirection) {
-          signalStrength += volumeWeight;
-          confidenceScore += volumeWeight * pvt.strength;
-          totalWeight += volumeWeight;
-          confirmationReasons.push(`Volume ${pvt.direction}`);
-        }
-      }
-      
-      // 7. Pattern recognition confirmation (10% weight)
-      if (d.pattern && settings.patternRecognition) {
-        const patternWeight = 0.1;
-        if ((d.pattern.type === 'bullish' && signalDirection === 'up') || 
-            (d.pattern.type === 'bearish' && signalDirection === 'down')) {
-          signalStrength += patternWeight;
-          confidenceScore += patternWeight * d.pattern.confidence;
-          totalWeight += patternWeight;
-          confirmationReasons.push(`${d.pattern.name} pattern`);
-        }
-      }
-      
-      // 8. Time trend confirmation (10% weight from settings)
-      if (Object.keys(d.timeTrends).length > 0 && settings.timeFilter) {
-        const trendWeight = settings.trendWeight / 100;
-        let trendAgreement = 0;
-        let trendCount = 0;
-        
-        for (const [tf, trend] of Object.entries(d.timeTrends)) {
-          if (trend.direction === signalDirection) {
-            trendAgreement += trend.strength;
-            trendCount++;
+        update(high, low, close) {
+          if (this.prevHigh === null) {
+            this.prevHigh = high;
+            this.prevLow = low;
+            this.prevClose = close;
+            return null;
           }
-        }
-        
-        if (trendCount > 0) {
-          const avgAgreement = trendAgreement / trendCount;
-          signalStrength += trendWeight;
-          confidenceScore += trendWeight * avgAgreement;
-          totalWeight += trendWeight;
-          confirmationReasons.push(`Multi-timeframe ${signalDirection}`);
-        }
-      }
-      
-      // Normalize signal strength and confidence
-      if (totalWeight > 0) {
-        signalStrength = signalStrength / totalWeight;
-        confidenceScore = confidenceScore / totalWeight;
-      } else {
-        signalStrength = 0;
-        confidenceScore = 0;
-      }
-      
-      // Update confidence meter
-      d.ui.confidenceFill.style.width = `${confidenceScore * 100}%`;
-      d.ui.confidenceLabel.textContent = `Confidence: ${Math.round(confidenceScore * 100)}%`;
-      
-      // Check for signal confirmation
-      if (signalDirection === 'up') {
-        if (d.lastSignal === 'HIGHER') {
-          d.confirmationCount++;
-        } else {
-          d.lastSignal = 'HIGHER';
-          d.confirmationCount = 1;
-        }
-      } else if (signalDirection === 'down') {
-        if (d.lastSignal === 'LOWER') {
-          d.confirmationCount++;
-        } else {
-          d.lastSignal = 'LOWER';
-          d.confirmationCount = 1;
-        }
-      } else {
-        d.lastSignal = null;
-        d.confirmationCount = 0;
-      }
-      
-      // Set signal explanation
-      d.ui.explanation.textContent = confirmationReasons.length > 0 ? 
-        confirmationReasons.join(', ') : 'No strong indicators yet';
-      
-      // Only show signal after confirmation period and with sufficient strength
-      if (d.confirmationCount >= settings.confirmationPeriod) {
-        const barrier = parseFloat(
-          document.getElementById(`barrier-${d.lastSignal.toLowerCase()}-${symbol}`).value
-        );
-        
-        if (confidenceScore >= settings.strongThreshold) {
-          d.ui.signalText.textContent = `${d.lastSignal} @ ${barrier.toFixed(2)}`;
-          if (confidenceScore >= VERY_STRONG_THRESHOLD) {
-            d.ui.signalText.className = `signal-area signal-very-strong`;
-            d.ui.countdown.textContent = `VERY STRONG (${Math.round(confidenceScore * 100)}%)`;
+          
+          // Calculate True Range
+          const tr = Math.max(
+            high - low,
+            Math.abs(high - this.prevClose),
+            Math.abs(low - this.prevClose)
+          );
+          
+          // Calculate Directional Movements
+          const upMove = high - this.prevHigh;
+          const downMove = this.prevLow - low;
+          
+          let plusDM = 0;
+          let minusDM = 0;
+          
+          if (upMove > downMove && upMove > 0) {
+            plusDM = upMove;
+          }
+          
+          if (downMove > upMove && downMove > 0) {
+            minusDM = downMove;
+          }
+          
+          // Smooth the values
+          if (this.trValues.length < this.period) {
+            this.trValues.push(tr);
+            this.plusDMValues.push(plusDM);
+            this.minusDMValues.push(minusDM);
+            
+            if (this.trValues.length === this.period) {
+              this.smoothedTR = this.trValues.reduce((sum, val) => sum + val, 0);
+              this.smoothedPlusDM = this.plusDMValues.reduce((sum, val) => sum + val, 0);
+              this.smoothedMinusDM = this.minusDMValues.reduce((sum, val) => sum + val, 0);
+            }
           } else {
-            d.ui.signalText.className = `signal-area signal-${d.lastSignal.toLowerCase()}`;
-            d.ui.countdown.textContent = `Strong signal (${Math.round(confidenceScore * 100)}%)`;
+            this.smoothedTR = this.smoothedTR - (this.smoothedTR / this.period) + tr;
+            this.smoothedPlusDM = this.smoothedPlusDM - (this.smoothedPlusDM / this.period) + plusDM;
+            this.smoothedMinusDM = this.smoothedMinusDM - (this.smoothedMinusDM / this.period) + minusDM;
           }
-        } 
-        // Show building signal with orange color when confirmation is in progress
-        else if (confidenceScore >= settings.weakThreshold) {
-          d.ui.signalText.textContent = 'BUILDING SIGNAL';
-          d.ui.signalText.className = 'signal-area signal-building';
-          d.ui.countdown.textContent = d.lastSignal ? 
-            `Confirming ${d.confirmationCount}/${settings.confirmationPeriod} (${Math.round(confidenceScore * 100)}%)` : 
-            'Analyzing market conditions';
+          
+          this.prevHigh = high;
+          this.prevLow = low;
+          this.prevClose = close;
+          
+          if (this.trValues.length < this.period) {
+            return null;
+          }
+          
+          // Calculate +DI and -DI
+          this.plusDI = (this.smoothedPlusDM / this.smoothedTR) * 100;
+          this.minusDI = (this.smoothedMinusDM / this.smoothedTR) * 100;
+          
+          // Calculate DX
+          const dx = (Math.abs(this.plusDI - this.minusDI) / (this.plusDI + this.minusDI)) * 100;
+          
+          // Calculate ADX
+          if (this.adx === null) {
+            this.adx = dx;
+          } else {
+            this.adx = ((this.adx * (this.period - 1)) + dx) / this.period;
+          }
+          
+          // Calculate trend quality (how consistent the trend is)
+          if (this.plusDI > this.minusDI) {
+            this.trendQuality = Math.min(1, (this.plusDI - this.minusDI) / 20);
+          } else {
+            this.trendQuality = Math.min(1, (this.minusDI - this.plusDI) / 20);
+          }
+          
+          return {
+            plusDI: this.plusDI,
+            minusDI: this.minusDI,
+            adx: this.adx,
+            trendStrength: this.adx > 25 ? (this.adx > 50 ? 'strong' : 'moderate') : 'weak',
+            trendDirection: this.plusDI > this.minusDI ? 'up' : 'down',
+            trendQuality: this.trendQuality,
+            diCross: Math.abs(this.plusDI - this.minusDI) < 5 ? 'crossing' : 'separated'
+          };
         }
-        // Show weak signal with yellow color when indicators show weak agreement
-        else if (confidenceScore > 0 && confidenceScore < settings.weakThreshold) {
-          d.ui.signalText.textContent = 'WEAK INDICATORS';
-          d.ui.signalText.className = 'signal-area signal-weak';
-          d.ui.countdown.textContent = 'Waiting for stronger confirmation';
-        }
-        else {
-          d.ui.signalText.textContent = 'ANALYZING';
-          d.ui.signalText.className = 'signal-area signal-waiting';
-          d.ui.countdown.textContent = 'Waiting for setup';
-        }
-      } else {
-        d.ui.signalText.textContent = 'ANALYZING';
-        d.ui.signalText.className = 'signal-area signal-waiting';
-        d.ui.countdown.textContent = d.lastSignal ? 
-          `Confirming ${d.confirmationCount}/${settings.confirmationPeriod}` : 
-          'Waiting for setup';
       }
-    } else {
-      // Not enough data yet
-      d.ui.signalText.textContent = 'GATHERING DATA';
-      d.ui.signalText.className = 'signal-area signal-waiting';
-      d.ui.countdown.textContent = `${d.closes.length}/${MIN_DATA_POINTS} points`;
-      d.ui.explanation.textContent = 'Collecting market data for analysis...';
-      d.ui.confidenceFill.style.width = '0%';
-      d.ui.confidenceLabel.textContent = 'Confidence: 0%';
-    }
-  }
 
-  // Initialize
-  document.addEventListener('DOMContentLoaded', () => {
-    buildCards();
-    connectWebSocket();
-    
-    // Settings panel controls
-    const settingsBtn = document.getElementById('settings-btn');
-    const settingsPanel = document.getElementById('settings-panel');
-    const closeSettings = document.getElementById('close-settings');
-    
-    settingsBtn.addEventListener('click', () => {
-      settingsPanel.style.display = 'block';
-    });
-    
-    closeSettings.addEventListener('click', () => {
-      settingsPanel.style.display = 'none';
-    });
-    
-    // Update settings from inputs
-    const settingsInputs = {
-      'confirmation-period': 'confirmationPeriod',
-      'strong-threshold': 'strongThreshold',
-      'weak-threshold': 'weakThreshold',
-      'volume-weight': 'volumeWeight',
-      'trend-weight': 'trendWeight'
+      // Enhanced Bollinger Bands with adaptive width
+      class EnhancedBollingerBands {
+        constructor(period = 20, multiplier = 2) {
+          this.period = period;
+          this.baseMultiplier = multiplier;
+          this.adaptiveMultiplier = multiplier;
+          this.prices = [];
+          this.volatilityHistory = [];
+        }
+        
+        update(price) {
+          this.prices.push(price);
+          
+          if (this.prices.length > this.period) {
+            this.prices.shift();
+          }
+          
+          if (this.prices.length < this.period) {
+            return null;
+          }
+          
+          // Calculate volatility
+          if (this.prices.length >= 2) {
+            const changes = [];
+            for (let i = 1; i < this.prices.length; i++) {
+              changes.push(Math.abs(this.prices[i] - this.prices[i-1]) / this.prices[i-1]);
+            }
+            const currentVolatility = changes.reduce((sum, val) => sum + val, 0) / changes.length;
+            this.volatilityHistory.push(currentVolatility);
+            if (this.volatilityHistory.length > 10) {
+              this.volatilityHistory.shift();
+            }
+            
+            // Adjust multiplier based on volatility
+            const avgVolatility = this.volatilityHistory.reduce((sum, val) => sum + val, 0) / this.volatilityHistory.length;
+            this.adaptiveMultiplier = this.baseMultiplier * (1 + avgVolatility * 5);
+          }
+          
+          const sum = this.prices.reduce((a, b) => a + b, 0);
+          const sma = sum / this.period;
+          const variance = this.prices.reduce((a, b) => a + Math.pow(b - sma, 2), 0) / this.period;
+          const stdDev = Math.sqrt(variance);
+          
+          return {
+            upper: sma + (this.adaptiveMultiplier * stdDev),
+            middle: sma,
+            lower: sma - (this.adaptiveMultiplier * stdDev),
+            bandwidth: (this.adaptiveMultiplier * stdDev * 2) / sma * 100,
+            percentB: (price - (sma - this.adaptiveMultiplier * stdDev)) / (this.adaptiveMultiplier * stdDev * 2),
+            squeeze: (this.adaptiveMultiplier * stdDev * 2) / sma < 0.01
+          };
+        }
+      }
+
+      // Volume Weighted Moving Average
+      class VWMA {
+        constructor(period = 20) {
+          this.period = period;
+          this.priceVolumeSum = 0;
+          this.volumeSum = 0;
+          this.priceVolumeHistory = [];
+          this.volumeHistory = [];
+        }
+        
+        update(price, volume) {
+          this.priceVolumeSum += price * volume;
+          this.volumeSum += volume;
+          this.priceVolumeHistory.push(price * volume);
+          this.volumeHistory.push(volume);
+          
+          if (this.priceVolumeHistory.length > this.period) {
+            this.priceVolumeSum -= this.priceVolumeHistory.shift();
+            this.volumeSum -= this.volumeHistory.shift();
+          }
+          
+          if (this.volumeHistory.length < this.period) {
+            return null;
+          }
+          
+          return this.priceVolumeSum / this.volumeSum;
+        }
+      }
+
+      // Price-Volume Trend
+      class PriceVolumeTrend {
+        constructor() {
+          this.prevPrice = null;
+          this.pvt = 0;
+          this.pvtHistory = [];
+        }
+        
+        update(price, volume) {
+          if (this.prevPrice === null) {
+            this.prevPrice = price;
+            return null;
+          }
+          
+          const priceChange = price - this.prevPrice;
+          this.prevPrice = price;
+          
+          if (priceChange !== 0) {
+            const pvtChange = (priceChange / this.prevPrice) * volume;
+            this.pvt += pvtChange;
+          }
+          
+          this.pvtHistory.push(this.pvt);
+          if (this.pvtHistory.length > 20) {
+            this.pvtHistory.shift();
+          }
+          
+          return {
+            value: this.pvt,
+            direction: this.pvtHistory.length >= 2 ? 
+              (this.pvt > this.pvtHistory[this.pvtHistory.length - 2] ? 'up' : 'down') : 'neutral',
+            strength: this.pvtHistory.length >= 5 ? 
+              (this.pvt - Math.min(...this.pvtHistory)) / (Math.max(...this.pvtHistory) - Math.min(...this.pvtHistory)) : 0
+          };
+        }
+      }
+
+      // Pattern recognition for common chart patterns
+      class PatternRecognizer {
+        constructor(lookback = 20) {
+          this.lookback = lookback;
+          this.priceHistory = [];
+          this.highHistory = [];
+          this.lowHistory = [];
+        }
+        
+        update(price, high, low) {
+          this.priceHistory.push(price);
+          this.highHistory.push(high);
+          this.lowHistory.push(low);
+          
+          if (this.priceHistory.length > this.lookback) {
+            this.priceHistory.shift();
+            this.highHistory.shift();
+            this.lowHistory.shift();
+          }
+          
+          if (this.priceHistory.length < this.lookback) {
+            return null;
+          }
+          
+          // Detect patterns
+          const patterns = [];
+          
+          // 1. Double Top/Bottom
+          if (this.priceHistory.length >= 10) {
+            const recentPrices = this.priceHistory.slice(-10);
+            const recentHighs = this.highHistory.slice(-10);
+            const recentLows = this.lowHistory.slice(-10);
+            
+            const maxHigh = Math.max(...recentHighs);
+            const minLow = Math.min(...recentLows);
+            const range = maxHigh - minLow;
+            const avgPrice = recentPrices.reduce((sum, p) => sum + p, 0) / recentPrices.length;
+            const rangePercent = (range / avgPrice) * 100;
+            
+            // Check if price range is small enough
+            if (rangePercent <= CONSOLIDATION_RANGE_PERCENT) {
+              // Double Top (bearish)
+              const peaks = [];
+              for (let i = 1; i < recentHighs.length - 1; i++) {
+                if (recentHighs[i] > recentHighs[i-1] && recentHighs[i] > recentHighs[i+1]) {
+                  peaks.push(recentHighs[i]);
+                }
+              }
+              
+              if (peaks.length >= 2 && 
+                  Math.abs(peaks[0] - peaks[1]) / peaks[0] < 0.01 && 
+                  recentPrices[recentPrices.length-1] < recentPrices[recentPrices.length-10]) {
+                patterns.push({ name: 'Double Top', type: 'bearish', confidence: 0.7 });
+              }
+              
+              // Double Bottom (bullish)
+              const troughs = [];
+              for (let i = 1; i < recentLows.length - 1; i++) {
+                if (recentLows[i] < recentLows[i-1] && recentLows[i] < recentLows[i+1]) {
+                  troughs.push(recentLows[i]);
+                }
+              }
+              
+              if (troughs.length >= 2 && 
+                  Math.abs(troughs[0] - troughs[1]) / troughs[0] < 0.01 && 
+                  recentPrices[recentPrices.length-1] > recentPrices[recentPrices.length-10]) {
+                patterns.push({ name: 'Double Bottom', type: 'bullish', confidence: 0.7 });
+              }
+            }
+          }
+          
+          // 2. Head and Shoulders
+          if (this.priceHistory.length >= 15) {
+            const recentHighs = this.highHistory.slice(-15);
+            
+            // Find potential shoulders and head
+            const peaks = [];
+            for (let i = 1; i < recentHighs.length - 1; i++) {
+              if (recentHighs[i] > recentHighs[i-1] && recentHighs[i] > recentHighs[i+1]) {
+                peaks.push({ index: i, value: recentHighs[i] });
+              }
+            }
+            
+            if (peaks.length >= 3) {
+              // Check if middle peak is higher than others (head)
+              if (peaks[1].value > peaks[0].value && peaks[1].value > peaks[2].value) {
+                // Check if shoulders are roughly equal
+                if (Math.abs(peaks[0].value - peaks[2].value) / peaks[0].value < 0.01) {
+                  // Check neckline break
+                  const necklineStart = this.lowHistory[this.lowHistory.length - 15 + peaks[0].index];
+                  const necklineEnd = this.lowHistory[this.lowHistory.length - 15 + peaks[2].index];
+                  const currentPrice = this.priceHistory[this.priceHistory.length-1];
+                  
+                  if (currentPrice < necklineStart && currentPrice < necklineEnd) {
+                    patterns.push({ name: 'Head and Shoulders', type: 'bearish', confidence: 0.8 });
+                  }
+                }
+              }
+            }
+          }
+          
+          // 3. Triangle patterns
+          if (this.priceHistory.length >= 12) {
+            const upperTrend = this.calculateTrend(this.highHistory.slice(-12), false);
+            const lowerTrend = this.calculateTrend(this.lowHistory.slice(-12), true);
+            
+            // Symmetrical triangle (both trendlines converging)
+            if (upperTrend.slope < 0 && lowerTrend.slope > 0) {
+              patterns.push({ name: 'Symmetrical Triangle', type: 'neutral', confidence: 0.6 });
+            }
+            // Ascending triangle (flat top, rising bottom)
+            else if (Math.abs(upperTrend.slope) < 0.001 && lowerTrend.slope > 0) {
+              patterns.push({ name: 'Ascending Triangle', type: 'bullish', confidence: 0.7 });
+            }
+            // Descending triangle (flat bottom, falling top)
+            else if (Math.abs(lowerTrend.slope) < 0.001 && upperTrend.slope < 0) {
+              patterns.push({ name: 'Descending Triangle', type: 'bearish', confidence: 0.7 });
+            }
+          }
+          
+          // Return the highest confidence pattern
+          if (patterns.length > 0) {
+            patterns.sort((a, b) => b.confidence - a.confidence);
+            return patterns[0];
+          }
+          
+          return null;
+        }
+        
+        calculateTrend(points, isSupport) {
+          const n = points.length;
+          let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+          
+          for (let i = 0; i < n; i++) {
+            sumX += i;
+            sumY += points[i];
+            sumXY += i * points[i];
+            sumXX += i * i;
+          }
+          
+          const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+          const intercept = (sumY - slope * sumX) / n;
+          
+          // For support/resistance, we want the most recent point to be the most relevant
+          const adjustedIntercept = isSupport ? 
+            Math.min(...points) : 
+            Math.max(...points);
+          
+          return {
+            slope,
+            intercept: adjustedIntercept,
+            value: slope * (n-1) + intercept
+          };
+        }
+      }
+
+      // Time-based trend analyzer
+      class TimeTrendAnalyzer {
+        constructor() {
+          this.timeframes = {
+            'short': { period: 5, data: [] },
+            'medium': { period: 15, data: [] },
+            'long': { period: 30, data: [] }
+          };
+        }
+        
+        update(price) {
+          const trends = {};
+          
+          for (const [key, tf] of Object.entries(this.timeframes)) {
+            tf.data.push(price);
+            
+            if (tf.data.length > tf.period) {
+              tf.data.shift();
+            }
+            
+            if (tf.data.length >= tf.period) {
+              const sma = tf.data.reduce((sum, val) => sum + val, 0) / tf.data.length;
+              const currentPrice = tf.data[tf.data.length - 1];
+              
+              trends[key] = {
+                direction: currentPrice > sma ? 'up' : 'down',
+                strength: Math.abs(currentPrice - sma) / sma,
+                angle: this.calculateAngle(tf.data)
+              };
+            }
+          }
+          
+          return trends;
+        }
+        
+        calculateAngle(points) {
+          if (points.length < 2) return 0;
+          
+          const firstPrice = points[0];
+          const lastPrice = points[points.length - 1];
+          const priceChange = lastPrice - firstPrice;
+          const percentChange = priceChange / firstPrice;
+          
+          // Convert to "degrees" (arbitrary scale)
+          return percentChange * 100;
+        }
+      }
+
+      function buildCards() {
+        const container = document.getElementById('cards-container');
+        volatilities.forEach(v => {
+          const card = document.createElement('div');
+          card.className = 'vol-card';
+          card.innerHTML = `
+            <div class="vol-title">${v.name}</div>
+            <div class="data-grid">
+              <div class="data-item"><span class="data-label">Price:</span><span id="price-${v.symbol}" class="indicator-value">-</span></div>
+              <div class="data-item"><span class="data-label">MACD:</span><span id="macd-${v.symbol}" class="indicator-value">-</span></div>
+              <div class="data-item"><span class="data-label">Signal:</span><span id="signal-${v.symbol}" class="indicator-value">-</span></div>
+              <div class="data-item"><span class="data-label">Hist:</span><span id="histogram-${v.symbol}" class="indicator-value">-</span></div>
+              <div class="data-item"><span class="data-label">RSI14:</span><span id="rsi-${v.symbol}" class="indicator-value">-</span></div>
+              <div class="data-item"><span class="data-label">ADX:</span><span id="adx-${v.symbol}" class="indicator-value">-</span></div>
+              <div class="data-item"><span class="data-label">BB %B:</span><span id="bbPercent-${v.symbol}" class="indicator-value">-</span></div>
+              <div class="data-item"><span class="data-label">Stoch:</span><span id="stoch-${v.symbol}" class="indicator-value">-</span></div>
+              <div class="data-item"><span class="data-label">Volume:</span><span id="volume-${v.symbol}" class="indicator-value">-</span></div>
+            </div>
+            
+            <div class="indicator-row">
+              <span class="indicator-name">MACD Strength</span>
+              <span class="indicator-strength" id="macd-strength-${v.symbol}">-</span>
+            </div>
+            <div id="macd-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
+            
+            <div class="indicator-row">
+              <span class="indicator-name">Trend Strength</span>
+              <span class="indicator-strength" id="trend-strength-${v.symbol}">-</span>
+            </div>
+            <div id="trend-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
+            
+            <div class="indicator-row">
+              <span class="indicator-name">Volume Trend</span>
+              <span class="indicator-strength" id="volume-trend-${v.symbol}">-</span>
+            </div>
+            <div id="volume-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
+            
+            <div class="barrier-inputs">
+              <div class="barrier-group">
+                <span class="barrier-label">HIGHER</span>
+                <input type="number" step="0.01" class="barrier-input" id="barrier-higher-${v.symbol}" value="${v.barrierHigher}" />
+              </div>
+              <div class="barrier-group">
+                <span class="barrier-label">LOWER</span>
+                <input type="number" step="0.01" class="barrier-input" id="barrier-lower-${v.symbol}" value="${v.barrierLower}" />
+              </div>
+            </div>
+            
+            <div class="confidence-meter">
+              <div id="confidence-fill-${v.symbol}" class="confidence-fill"></div>
+            </div>
+            <div id="confidence-label-${v.symbol}" class="confidence-label">Confidence: 0%</div>
+            
+            <div id="signal-text-${v.symbol}" class="signal-area signal-waiting">ANALYZING</div>
+            <div id="countdown-${v.symbol}" class="countdown"></div>
+            <div id="signal-explanation-${v.symbol}" class="signal-explanation"></div>
+            <div id="pattern-indicator-${v.symbol}" class="pattern-indicator pattern-neutral"></div>
+          `;
+          container.appendChild(card);
+
+          dataStore[v.symbol] = {
+            closes: [],
+            highs: [],
+            lows: [],
+            volumes: [],
+            macdCalc: new EnhancedMACD(),
+            rsiCalc: new EnhancedRSI(14),
+            stochCalc: new EnhancedStochastic(14, 3),
+            adxCalc: new EnhancedADX(14),
+            bbCalc: new EnhancedBollingerBands(20, 2),
+            vwmaCalc: new VWMA(20),
+            pvtCalc: new PriceVolumeTrend(),
+            patternCalc: new PatternRecognizer(PATTERN_LOOKBACK),
+            timeTrendCalc: new TimeTrendAnalyzer(),
+            confirmationCount: 0,
+            lastSignal: null,
+            consolidationCount: 0,
+            pattern: null,
+            timeTrends: {},
+            ui: {
+              price: card.querySelector(`#price-${v.symbol}`),
+              macdLine: card.querySelector(`#macd-${v.symbol}`),
+              signalLine: card.querySelector(`#signal-${v.symbol}`),
+              histogram: card.querySelector(`#histogram-${v.symbol}`),
+              rsi: card.querySelector(`#rsi-${v.symbol}`),
+              adx: card.querySelector(`#adx-${v.symbol}`),
+              bbPercent: card.querySelector(`#bbPercent-${v.symbol}`),
+              stoch: card.querySelector(`#stoch-${v.symbol}`),
+              volume: card.querySelector(`#volume-${v.symbol}`),
+              signalText: card.querySelector(`#signal-text-${v.symbol}`),
+              countdown: card.querySelector(`#countdown-${v.symbol}`),
+              macdStrength: card.querySelector(`#macd-strength-${v.symbol}`),
+              macdBar: card.querySelector(`#macd-bar-${v.symbol}`),
+              trendStrength: card.querySelector(`#trend-strength-${v.symbol}`),
+              trendBar: card.querySelector(`#trend-bar-${v.symbol}`),
+              volumeTrend: card.querySelector(`#volume-trend-${v.symbol}`),
+              volumeBar: card.querySelector(`#volume-bar-${v.symbol}`),
+              explanation: card.querySelector(`#signal-explanation-${v.symbol}`),
+              confidenceFill: card.querySelector(`#confidence-fill-${v.symbol}`),
+              confidenceLabel: card.querySelector(`#confidence-label-${v.symbol}`),
+              patternIndicator: card.querySelector(`#pattern-indicator-${v.symbol}`)
+            }
+          };
+        });
+      }
+
+      function connectWebSocket() {
+        updateStatus('connecting', 'Connecting...');
+        if(ws) ws.close();
+        
+        ws = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089');
+        ws.onopen = () => {
+          updateStatus('connected', 'Connected');
+          volatilities.forEach(v => ws.send(JSON.stringify({ ticks: v.symbol, subscribe: 1 })));
+        };
+        ws.onmessage = e => {
+          try {
+            const data = JSON.parse(e.data);
+            if(data.msg_type === 'tick') handleTick(data.tick);
+          } catch(e) {
+            console.error('Error parsing message:', e);
+          }
+        };
+        ws.onclose = () => {
+          updateStatus('disconnected', 'Disconnected');
+          setTimeout(connectWebSocket, 3000);
+        };
+        ws.onerror = (e) => {
+          console.error('WebSocket error:', e);
+          ws.close();
+        };
+      }
+
+      function updateStatus(status, text) {
+        const el = document.getElementById('connection-status');
+        el.className = `connection-status ${status}`;
+        el.textContent = text;
+      }
+
+      function calculateSMA(prices, period) {
+        if (prices.length < period) return null;
+        return prices.slice(-period).reduce((sum, price) => sum + price, 0) / period;
+      }
+
+      function checkConsolidation(data) {
+        if (data.closes.length < CONSOLIDATION_PERIOD) return false;
+        
+        // Get the recent price range
+        const recentCloses = data.closes.slice(-CONSOLIDATION_PERIOD);
+        const recentHighs = data.highs.slice(-CONSOLIDATION_PERIOD);
+        const recentLows = data.lows.slice(-CONSOLIDATION_PERIOD);
+        
+        const maxHigh = Math.max(...recentHighs);
+        const minLow = Math.min(...recentLows);
+        const range = maxHigh - minLow;
+        const avgPrice = recentCloses.reduce((sum, p) => sum + p, 0) / recentCloses.length;
+        const rangePercent = (range / avgPrice) * 100;
+        
+        // Check if price range is small enough
+        if (rangePercent > CONSOLIDATION_RANGE_PERCENT) return false;
+        
+        // Check indicators for neutral conditions
+        const macd = data.macdCalc;
+        const rsi = data.rsiCalc.getCurrent();
+        const adx = data.adxCalc;
+        const bb = data.bbCalc;
+        const stoch = data.stochCalc;
+        
+        // MACD histogram near zero
+        if (Math.abs(macd.histogram) > 0.5) return false;
+        
+        // RSI in middle range
+        if (rsi < 40 || rsi > 60) return false;
+        
+        // ADX shows weak trend
+        if (adx.adx > 20) return false;
+        
+        // Bollinger Bands %B near middle
+        const bbPercent = bb.percentB;
+        if (bbPercent < 0.4 || bbPercent > 0.6) return false;
+        
+        // Stochastic in middle range
+        if (stoch.k < 40 || stoch.k > 60 || stoch.d < 40 || stoch.d > 60) return false;
+        
+        return true;
+      }
+
+      function handleTick(tick) {
+        const { symbol, quote } = tick;
+        const d = dataStore[symbol];
+        if(!d) return;
+
+        const price = parseFloat(quote);
+        // For volatility indices, we'll use the same value for high/low/close
+        const high = price;
+        const low = price;
+        // Simulate volume (since we don't have real volume data for these indices)
+        const volume = 1000 + Math.round(Math.random() * 5000);
+        
+        d.closes.push(price);
+        d.highs.push(high);
+        d.lows.push(low);
+        d.volumes.push(volume);
+        
+        // Keep only recent data to manage memory
+        if(d.closes.length > 200) {
+          d.closes.shift();
+          d.highs.shift();
+          d.lows.shift();
+          d.volumes.shift();
+        }
+
+        // Update UI with current price and volume
+        d.ui.price.textContent = price.toFixed(3);
+        d.ui.volume.textContent = volume.toFixed(0);
+        
+        // Update MACD indicators
+        const macd = d.macdCalc.update(price);
+        d.ui.macdLine.textContent = macd.macdLine.toFixed(3);
+        d.ui.signalLine.textContent = macd.signalLine.toFixed(3);
+        d.ui.histogram.textContent = macd.histogram.toFixed(3);
+        
+        // Update MACD strength visualization
+        if (macd.strength !== undefined) {
+          d.ui.macdStrength.textContent = `${Math.round(macd.strength * 100)}%`;
+          d.ui.macdBar.className = `indicator-bar ${macd.direction === 'up' ? 'positive-bar' : 'negative-bar'}`;
+          d.ui.macdBar.style.width = `${macd.strength * 100}%`;
+        }
+        
+        // Update RSI
+        const rsi = d.rsiCalc.update(price);
+        if (rsi !== null) {
+          d.ui.rsi.textContent = rsi.value.toFixed(1);
+          if (rsi.isOverbought) d.ui.rsi.style.color = '#f00';
+          else if (rsi.isOversold) d.ui.rsi.style.color = '#0f0';
+          else d.ui.rsi.style.color = 'white';
+        }
+        
+        // Update Stochastic Oscillator
+        const stoch = d.stochCalc.update(price, high, low);
+        if (stoch.k !== null && stoch.d !== null) {
+          d.ui.stoch.textContent = `${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)}`;
+          if (stoch.isOverbought) d.ui.stoch.style.color = '#f00';
+          else if (stoch.isOversold) d.ui.stoch.style.color = '#0f0';
+          else d.ui.stoch.style.color = 'white';
+        }
+        
+        // Update ADX
+        const adx = d.adxCalc.update(high, low, price);
+        if (adx !== null) {
+          d.ui.adx.textContent = `${adx.adx.toFixed(1)} (${adx.trendDirection})`;
+          
+          // Update trend strength visualization
+          const trendStrengthValue = Math.min(adx.adx / 50, 1); // Cap at 50 for visualization
+          d.ui.trendStrength.textContent = `${adx.trendStrength}`;
+          d.ui.trendBar.className = `indicator-bar ${adx.trendDirection === 'up' ? 'positive-bar' : 'negative-bar'}`;
+          d.ui.trendBar.style.width = `${trendStrengthValue * 100}%`;
+        }
+        
+        // Update Bollinger Bands
+        const bb = d.bbCalc.update(price);
+        if (bb !== null) {
+          d.ui.bbPercent.textContent = bb.percentB.toFixed(2);
+          if (bb.percentB > 0.8) d.ui.bbPercent.style.color = '#f00';
+          else if (bb.percentB < 0.2) d.ui.bbPercent.style.color = '#0f0';
+          else d.ui.bbPercent.style.color = 'white';
+        }
+        
+        // Update Volume Weighted MA
+        const vwma = d.vwmaCalc.update(price, volume);
+        
+        // Update Price Volume Trend
+        const pvt = d.pvtCalc.update(price, volume);
+        if (pvt !== null) {
+          d.ui.volumeTrend.textContent = pvt.direction.toUpperCase();
+          d.ui.volumeBar.className = `indicator-bar ${pvt.direction === 'up' ? 'positive-bar' : 'negative-bar'}`;
+          d.ui.volumeBar.style.width = `${pvt.strength * 100}%`;
+        }
+        
+        // Update Pattern Recognition
+        d.pattern = d.patternCalc.update(price, high, low);
+        if (d.pattern) {
+          d.ui.patternIndicator.textContent = d.pattern.name;
+          d.ui.patternIndicator.className = `pattern-indicator pattern-${d.pattern.type}`;
+        } else {
+          d.ui.patternIndicator.textContent = 'No Pattern';
+          d.ui.patternIndicator.className = 'pattern-indicator pattern-neutral';
+        }
+        
+        // Update Time-based Trends
+        d.timeTrends = d.timeTrendCalc.update(price);
+        
+        // Check for consolidation first
+        const isConsolidating = checkConsolidation(d);
+        if (isConsolidating) {
+          d.consolidationCount++;
+          if (d.consolidationCount >= 3) { // Require 3 consecutive confirmations
+            d.ui.signalText.textContent = 'CONSOLIDATION';
+            d.ui.signalText.className = 'signal-area signal-consolidation';
+            d.ui.countdown.textContent = 'Market ranging - wait for breakout';
+            d.ui.explanation.textContent = 'Price moving sideways, indicators neutral - wait for breakout direction';
+            d.ui.confidenceFill.style.width = '0%';
+            d.ui.confidenceLabel.textContent = 'Confidence: 0%';
+            return; // Skip other signal processing during consolidation
+          }
+        } else {
+          d.consolidationCount = 0;
+        }
+        
+        // Only generate signals if we have enough data
+        if (d.closes.length >= MIN_DATA_POINTS && rsi !== null && adx !== null && bb !== null && stoch.k !== null) {
+          // Calculate signal strength (0-1)
+          let signalStrength = 0;
+          let signalDirection = null;
+          let confirmationReasons = [];
+          let confidenceScore = 0;
+          let totalWeight = 0;
+          
+          // 1. MACD confirmation (20% weight)
+          if (macd.direction === 'up' && macd.histogram > 0) {
+            const macdWeight = 0.2 * macd.strength;
+            signalStrength += macdWeight;
+            confidenceScore += macdWeight * macd.strength;
+            totalWeight += 0.2;
+            signalDirection = 'up';
+            confirmationReasons.push(`MACD bullish (${Math.round(macd.strength * 100)}%)`);
+            
+            // Check for divergences
+            if (macd.divergences.some(d => d.type.includes('bullish'))) {
+              signalStrength += 0.05;
+              confidenceScore += 0.05;
+              confirmationReasons.push('Bullish divergence');
+            }
+          } else if (macd.direction === 'down' && macd.histogram < 0) {
+            const macdWeight = 0.2 * macd.strength;
+            signalStrength += macdWeight;
+            confidenceScore += macdWeight * macd.strength;
+            totalWeight += 0.2;
+            signalDirection = 'down';
+            confirmationReasons.push(`MACD bearish (${Math.round(macd.strength * 100)}%)`);
+            
+            // Check for divergences
+            if (macd.divergences.some(d => d.type.includes('bearish'))) {
+              signalStrength += 0.05;
+              confidenceScore += 0.05;
+              confirmationReasons.push('Bearish divergence');
+            }
+          }
+          
+          // 2. RSI confirmation (15% weight)
+          if (rsi.isOversold) {
+            const rsiWeight = 0.15;
+            signalStrength += rsiWeight;
+            confidenceScore += rsiWeight * (1 - (rsi.value / rsi.oversoldLevel));
+            totalWeight += 0.15;
+            signalDirection = 'up';
+            confirmationReasons.push(`RSI oversold (${rsi.value.toFixed(1)})`);
+          } else if (rsi.isOverbought) {
+            const rsiWeight = 0.15;
+            signalStrength += rsiWeight;
+            confidenceScore += rsiWeight * (1 - ((rsi.overboughtLevel - rsi.value) / rsi.overboughtLevel));
+            totalWeight += 0.15;
+            signalDirection = 'down';
+            confirmationReasons.push(`RSI overbought (${rsi.value.toFixed(1)})`);
+          } else if (rsi.value < 50 && signalDirection === 'up') {
+            const rsiWeight = 0.05;
+            signalStrength += rsiWeight;
+            confidenceScore += rsiWeight * 0.5;
+            totalWeight += 0.05;
+            confirmationReasons.push(`RSI below mid (${rsi.value.toFixed(1)})`);
+          } else if (rsi.value > 50 && signalDirection === 'down') {
+            const rsiWeight = 0.05;
+            signalStrength += rsiWeight;
+            confidenceScore += rsiWeight * 0.5;
+            totalWeight += 0.05;
+            confirmationReasons.push(`RSI above mid (${rsi.value.toFixed(1)})`);
+          }
+          
+          // 3. ADX trend confirmation (20% weight)
+          if (adx.trendStrength !== 'weak') {
+            const adxWeight = 0.2 * (adx.adx / 50);
+            signalStrength += adxWeight;
+            confidenceScore += adxWeight * adx.trendQuality;
+            totalWeight += 0.2;
+            
+            if (adx.trendDirection === 'up' && signalDirection !== 'down') {
+              signalDirection = 'up';
+              confirmationReasons.push(`ADX ${adx.trendStrength} uptrend (${adx.adx.toFixed(1)})`);
+            } else if (adx.trendDirection === 'down' && signalDirection !== 'up') {
+              signalDirection = 'down';
+              confirmationReasons.push(`ADX ${adx.trendStrength} downtrend (${adx.adx.toFixed(1)})`);
+            }
+          }
+          
+          // 4. Bollinger Bands confirmation (15% weight)
+          if (bb.percentB < 0.2) {
+            const bbWeight = 0.15;
+            signalStrength += bbWeight;
+            confidenceScore += bbWeight * (1 - (bb.percentB / 0.2));
+            totalWeight += 0.15;
+            signalDirection = 'up';
+            confirmationReasons.push(`BB lower band (${bb.percentB.toFixed(2)})`);
+          } else if (bb.percentB > 0.8) {
+            const bbWeight = 0.15;
+            signalStrength += bbWeight;
+            confidenceScore += bbWeight * (1 - ((1 - bb.percentB) / 0.2));
+            totalWeight += 0.15;
+            signalDirection = 'down';
+            confirmationReasons.push(`BB upper band (${bb.percentB.toFixed(2)})`);
+          } else if (bb.squeeze) {
+            // Bollinger Band squeeze (potential breakout coming)
+            signalStrength += 0.05;
+            confidenceScore += 0.05;
+            confirmationReasons.push('BB squeeze (potential breakout)');
+          }
+          
+          // 5. Stochastic confirmation (10% weight)
+          if (stoch.isOversold) {
+            const stochWeight = 0.1;
+            signalStrength += stochWeight;
+            confidenceScore += stochWeight * (1 - (stoch.k / stoch.oversoldLevel));
+            totalWeight += 0.1;
+            signalDirection = 'up';
+            confirmationReasons.push(`Stoch oversold (${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)})`);
+          } else if (stoch.isOverbought) {
+            const stochWeight = 0.1;
+            signalStrength += stochWeight;
+            confidenceScore += stochWeight * (1 - ((stoch.overboughtLevel - stoch.k) / stoch.overboughtLevel));
+            totalWeight += 0.1;
+            signalDirection = 'down';
+            confirmationReasons.push(`Stoch overbought (${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)})`);
+          }
+          
+          // 6. Volume confirmation (10% weight from settings)
+          if (pvt !== null) {
+            const volumeWeight = settings.volumeWeight / 100;
+            if (pvt.direction === signalDirection) {
+              signalStrength += volumeWeight;
+              confidenceScore += volumeWeight * pvt.strength;
+              totalWeight += volumeWeight;
+              confirmationReasons.push(`Volume ${pvt.direction}`);
+            }
+          }
+          
+          // 7. Pattern recognition confirmation (10% weight)
+          if (d.pattern && settings.patternRecognition) {
+            const patternWeight = 0.1;
+            if ((d.pattern.type === 'bullish' && signalDirection === 'up') || 
+                (d.pattern.type === 'bearish' && signalDirection === 'down')) {
+              signalStrength += patternWeight;
+              confidenceScore += patternWeight * d.pattern.confidence;
+              totalWeight += patternWeight;
+              confirmationReasons.push(`${d.pattern.name} pattern`);
+            }
+          }
+          
+          // 8. Time trend confirmation (10% weight from settings)
+          if (Object.keys(d.timeTrends).length > 0 && settings.timeFilter) {
+            const trendWeight = settings.trendWeight / 100;
+            let trendAgreement = 0;
+            let trendCount = 0;
+            
+            for (const [tf, trend] of Object.entries(d.timeTrends)) {
+              if (trend.direction === signalDirection) {
+                trendAgreement += trend.strength;
+                trendCount++;
+              }
+            }
+            
+            if (trendCount > 0) {
+              const avgAgreement = trendAgreement / trendCount;
+              signalStrength += trendWeight;
+              confidenceScore += trendWeight * avgAgreement;
+              totalWeight += trendWeight;
+              confirmationReasons.push(`Multi-timeframe ${signalDirection}`);
+            }
+          }
+          
+          // Normalize signal strength and confidence
+          if (totalWeight > 0) {
+            signalStrength = signalStrength / totalWeight;
+            confidenceScore = confidenceScore / totalWeight;
+          } else {
+            signalStrength = 0;
+            confidenceScore = 0;
+          }
+          
+          // Update confidence meter
+          d.ui.confidenceFill.style.width = `${confidenceScore * 100}%`;
+          d.ui.confidenceLabel.textContent = `Confidence: ${Math.round(confidenceScore * 100)}%`;
+          
+          // Check for signal confirmation
+          if (signalDirection === 'up') {
+            if (d.lastSignal === 'HIGHER') {
+              d.confirmationCount++;
+            } else {
+              d.lastSignal = 'HIGHER';
+              d.confirmationCount = 1;
+            }
+          } else if (signalDirection === 'down') {
+            if (d.lastSignal === 'LOWER') {
+              d.confirmationCount++;
+            } else {
+              d.lastSignal = 'LOWER';
+              d.confirmationCount = 1;
+            }
+          } else {
+            d.lastSignal = null;
+            d.confirmationCount = 0;
+          }
+          
+          // Set signal explanation
+          d.ui.explanation.textContent = confirmationReasons.length > 0 ? 
+            confirmationReasons.join(', ') : 'No strong indicators yet';
+          
+          // Only show signal after confirmation period and with sufficient strength
+          if (d.confirmationCount >= settings.confirmationPeriod) {
+            const barrier = parseFloat(
+              document.getElementById(`barrier-${d.lastSignal.toLowerCase()}-${symbol}`).value
+            );
+            
+            if (confidenceScore >= settings.strongThreshold) {
+              d.ui.signalText.textContent = `${d.lastSignal} @ ${barrier.toFixed(2)}`;
+              if (confidenceScore >= VERY_STRONG_THRESHOLD) {
+                d.ui.signalText.className = `signal-area signal-very-strong`;
+                d.ui.countdown.textContent = `VERY STRONG (${Math.round(confidenceScore * 100)}%)`;
+              } else {
+                d.ui.signalText.className = `signal-area signal-${d.lastSignal.toLowerCase()}`;
+                d.ui.countdown.textContent = `Strong signal (${Math.round(confidenceScore * 100)}%)`;
+              }
+            } 
+            // Show building signal with orange color when confirmation is in progress
+            else if (confidenceScore >= settings.weakThreshold) {
+              d.ui.signalText.textContent = 'BUILDING SIGNAL';
+              d.ui.signalText.className = 'signal-area signal-building';
+              d.ui.countdown.textContent = d.lastSignal ? 
+                `Confirming ${d.confirmationCount}/${settings.confirmationPeriod} (${Math.round(confidenceScore * 100)}%)` : 
+                'Analyzing market conditions';
+            }
+            // Show weak signal with yellow color when indicators show weak agreement
+            else if (confidenceScore > 0 && confidenceScore < settings.weakThreshold) {
+              d.ui.signalText.textContent = 'WEAK INDICATORS';
+              d.ui.signalText.className = 'signal-area signal-weak';
+              d.ui.countdown.textContent = 'Waiting for stronger confirmation';
+            }
+            else {
+              d.ui.signalText.textContent = 'ANALYZING';
+              d.ui.signalText.className = 'signal-area signal-waiting';
+              d.ui.countdown.textContent = 'Waiting for setup';
+            }
+          } else {
+            d.ui.signalText.textContent = 'ANALYZING';
+            d.ui.signalText.className = 'signal-area signal-waiting';
+            d.ui.countdown.textContent = d.lastSignal ? 
+              `Confirming ${d.confirmationCount}/${settings.confirmationPeriod}` : 
+              'Waiting for setup';
+          }
+        } else {
+          // Not enough data yet
+          d.ui.signalText.textContent = 'GATHERING DATA';
+          d.ui.signalText.className = 'signal-area signal-waiting';
+          d.ui.countdown.textContent = `${d.closes.length}/${MIN_DATA_POINTS} points`;
+          d.ui.explanation.textContent = 'Collecting market data for analysis...';
+          d.ui.confidenceFill.style.width = '0%';
+          d.ui.confidenceLabel.textContent = 'Confidence: 0%';
+        }
+      }
+
+      // Initialize generator
+      buildCards();
+      connectWebSocket();
+      
+      // Settings panel controls
+      const settingsBtn = document.getElementById('settings-btn');
+      const settingsPanel = document.getElementById('settings-panel');
+      const closeSettings = document.getElementById('close-settings');
+      
+      settingsBtn.addEventListener('click', () => {
+        settingsPanel.style.display = 'block';
+      });
+      
+      closeSettings.addEventListener('click', () => {
+        settingsPanel.style.display = 'none';
+      });
+      
+      // Update settings from inputs
+      const settingsInputs = {
+        'confirmation-period': 'confirmationPeriod',
+        'strong-threshold': 'strongThreshold',
+        'weak-threshold': 'weakThreshold',
+        'volume-weight': 'volumeWeight',
+        'trend-weight': 'trendWeight'
+      };
+      
+      Object.entries(settingsInputs).forEach(([id, key]) => {
+        const input = document.getElementById(id);
+        input.addEventListener('change', () => {
+          settings[key] = id.includes('threshold') ? 
+            parseInt(input.value) / 100 : 
+            parseInt(input.value);
+        });
+      });
+      
+      // Add input change listeners for barriers
+      volatilities.forEach(v => {
+        const higherInput = document.getElementById(`barrier-higher-${v.symbol}`);
+        const lowerInput = document.getElementById(`barrier-lower-${v.symbol}`);
+        
+        higherInput.addEventListener('change', () => {
+          v.barrierHigher = parseFloat(higherInput.value);
+        });
+        
+        lowerInput.addEventListener('change', () => {
+          v.barrierLower = parseFloat(lowerInput.value);
+        });
+      });
+    }
+
+    // Load default content on page load
+    window.onload = () => {
+      loadContent("overview");
+      showTab('documentation');
     };
-    
-    Object.entries(settingsInputs).forEach(([id, key]) => {
-      const input = document.getElementById(id);
-      input.addEventListener('change', () => {
-        settings[key] = id.includes('threshold') ? 
-          parseInt(input.value) / 100 : 
-          parseInt(input.value);
-      });
-    });
-    
-    // Add input change listeners for barriers
-    volatilities.forEach(v => {
-      const higherInput = document.getElementById(`barrier-higher-${v.symbol}`);
-      const lowerInput = document.getElementById(`barrier-lower-${v.symbol}`);
-      
-      higherInput.addEventListener('change', () => {
-        v.barrierHigher = parseFloat(higherInput.value);
-      });
-      
-      lowerInput.addEventListener('change', () => {
-        v.barrierLower = parseFloat(lowerInput.value);
-      });
-    });
-  });
-})();
-</script>
+  </script>
 </body>
 </html>
