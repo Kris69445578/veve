@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -535,6 +536,66 @@
         grid-template-columns: 1fr;
       }
     }
+    /* Icons (using Unicode characters as pseudo-elements) */
+    .icon-trend-up::before {
+      content: "↑";
+    }
+    
+    .icon-trend-down::before {
+      content: "↓";
+    }
+    
+    .icon-bullish::before {
+      content: "🐂";
+    }
+    
+    .icon-bearish::before {
+      content: "🐻";
+    }
+    
+    .icon-settings::before {
+      content: "⚙";
+    }
+    
+    .icon-docs::before {
+      content: "📄";
+    }
+    
+    .icon-chart::before {
+      content: "📈";
+    }
+    
+    .icon-info::before {
+      content: "ℹ";
+    }
+    
+    .icon-rules::before {
+      content: "📋";
+    }
+    
+    .icon-custom::before {
+      content: "🛠";
+    }
+    
+    .icon-strengths::before {
+      content: "💪";
+    }
+    
+    .icon-limitations::before {
+      content: "⚠";
+    }
+    
+    .icon-overview::before {
+      content: "👀";
+    }
+    
+    .icon-components::before {
+      content: "🧩";
+    }
+    
+    .icon-signals::before {
+      content: "🔔";
+    }
   </style>
 </head>
 <body>
@@ -542,6 +603,14 @@
   <!-- Navigation Bar -->
   <nav class="navbar">
     <ul class="menu">
+      <li><a onclick="showTab('documentation')" class="active"><i class="icon-docs"></i> Documentation</a></li>
+      <li><a onclick="showTab('generator')"><i class="icon-chart"></i> Signal Generator</a></li>
+      <li><a onclick="loadContent('overview')"><i class="icon-overview"></i> Overview</a></li>
+      <li><a onclick="loadContent('core')"><i class="icon-components"></i> Core Components</a></li>
+      <li><a onclick="loadContent('signals')"><i class="icon-signals"></i> Signal Logic</a></li>
+      <li><a onclick="loadContent('rules')"><i class="icon-rules"></i> Trading Rules</a></li>
+      <li><a onclick="loadContent('custom')"><i class="icon-custom"></i> Customization</a></li>
+      <li><a onclick="loadContent('strengths')"><i class="icon-strengths"></i> Strengths & Limitations</a></li>
       <li><a onclick="showTab('documentation')">Documentation</a></li>
       <li><a onclick="showTab('generator')">Signal Generator</a></li>
       <li><a onclick="loadContent('overview')">Overview</a></li>
