@@ -712,6 +712,23 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* Falling animation for emojis */
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
+
+    .falling-emoji {
+      position: fixed;
+      left: 0;
+      top: -50px;
+      font-size: 20px;
+      opacity: 0.8;
+      pointer-events: none;
+      z-index: 100;
+    }
   </style>
 </head>
 <body>
@@ -2336,25 +2353,24 @@
     }
 
     function showTab(tabId) {
-  // Hide all tab contents
-  document.querySelectorAll('.tab-content').forEach(tab => {
-    tab.classList.remove('active');
-  });
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
 
-  // Show the selected tab content
-  document.getElementById(tabId).classList.add('active');
+      // Show the selected tab content
+      document.getElementById(tabId).classList.add('active');
 
-  // If showing generator tab, initialize it
-  if (tabId === 'generator') {
-    initializeGenerator();
-  }
-}
+      // If showing generator tab, initialize it
+      if (tabId === 'generator') {
+        initializeGenerator();
+      }
+    }
 
-// Load default content on page load
-window.onload = () => {
-  showTab('volatility'); // Default to the Volatility Strategy tab
-};
-
+    // Load default content on page load
+    window.onload = () => {
+      showTab('volatility'); // Default to the Volatility Strategy tab
+    };
 
     // Additional animation effects for Volatility Trading Strategy
     document.addEventListener('DOMContentLoaded', function() {
@@ -2363,24 +2379,30 @@ window.onload = () => {
         feature.style.animationDelay = `${index * 0.2}s`;
       });
 
-      // Create floating emojis
-      const emojis = ['📈', '💰', '⚡', '💵', '💸', '🎯'];
-      setInterval(() => {
-        const emoji = document.createElement('div');
-        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-        emoji.style.position = 'fixed';
-        emoji.style.left = Math.random() * 100 + 'vw';
-        emoji.style.top = '-50px';
-        emoji.style.fontSize = (Math.random() * 20 + 10) + 'px';
-        emoji.style.opacity = Math.random() * 0.5 + 0.5;
-        emoji.style.animation = `fall ${Math.random() * 5 + 5}s linear forwards`;
+      // Create falling emojis only on the Volatility Strategy tab
+      function startFallingAnimation() {
+        const emojis = ['📈', '💰', '⚡', '💵', '💸', '🎯'];
+        setInterval(() => {
+          if (document.getElementById('volatility').classList.contains('active')) {
+            const emoji = document.createElement('div');
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.className = 'falling-emoji';
+            emoji.style.left = Math.random() * 100 + 'vw';
+            emoji.style.top = '-50px';
+            emoji.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            emoji.style.opacity = Math.random() * 0.5 + 0.5;
+            emoji.style.animation = `fall ${Math.random() * 5 + 5}s linear forwards`;
 
-        document.body.appendChild(emoji);
+            document.body.appendChild(emoji);
 
-        setTimeout(() => {
-          emoji.remove();
-        }, 6000);
-      }, 500);
+            setTimeout(() => {
+              emoji.remove();
+            }, 6000);
+          }
+        }, 500);
+      }
+
+      startFallingAnimation();
     });
 
     // Add falling animation
@@ -2392,7 +2414,7 @@ window.onload = () => {
         }
       }
     `;
-
+    document.head.appendChild(style);
   </script>
 </body>
 </html>
