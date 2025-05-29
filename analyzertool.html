@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -507,7 +505,7 @@
       color: white;
       text-align: center;
       padding: 20px 0;
-      
+
     }
 
     /* Tab system */
@@ -540,61 +538,179 @@
     .icon-trend-up::before {
       content: "↑";
     }
-    
+
     .icon-trend-down::before {
       content: "↓";
     }
-    
+
     .icon-bullish::before {
       content: "🐂";
     }
-    
+
     .icon-bearish::before {
       content: "🐻";
     }
-    
+
     .icon-settings::before {
       content: "⚙";
     }
-    
+
     .icon-docs::before {
       content: "📄";
     }
-    
+
     .icon-chart::before {
       content: "📈";
     }
-    
+
     .icon-info::before {
       content: "ℹ";
     }
-    
+
     .icon-rules::before {
       content: "📋";
     }
-    
+
     .icon-custom::before {
       content: "🛠";
     }
-    
+
     .icon-strengths::before {
       content: "💪";
     }
-    
+
     .icon-limitations::before {
       content: "⚠";
     }
-    
+
     .icon-overview::before {
       content: "👀";
     }
-    
+
     .icon-components::before {
       content: "🧩";
     }
-    
+
     .icon-signals::before {
       content: "🔔";
+    }
+
+    /* Volatility Trading Strategy Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #121826;
+      color: #e0e0e0;
+      overflow-x: hidden;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #4fc3f7;
+      text-align: center;
+      font-size: 2.5em;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px rgba(79, 195, 247, 0.5);
+      animation: glow 2s infinite alternate;
+    }
+
+    .strategy-card {
+      background: rgba(30, 35, 50, 0.8);
+      border-radius: 10px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      border-left: 4px solid #4fc3f7;
+      animation: slideIn 1s ease-out;
+    }
+
+    .feature-box {
+      background: rgba(40, 45, 60, 0.6);
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .feature-title {
+      color: #81c784;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .verdict {
+      text-align: center;
+      font-size: 1.3em;
+      padding: 20px;
+      background: linear-gradient(90deg, rgba(79,195,247,0.1), rgba(129,199,132,0.1));
+      border-radius: 10px;
+      margin-top: 40px;
+      animation: pulse 3s infinite;
+    }
+
+    .ready {
+      font-size: 1.8em;
+      text-align: center;
+      margin-top: 40px;
+      color: #ffb74d;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px rgba(79, 195, 247, 0.5); }
+      to { text-shadow: 0 0 15px rgba(79, 195, 247, 0.8), 0 0 20px rgba(79, 195, 247, 0.6); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+      40% {transform: translateY(-20px);}
+      60% {transform: translateY(-10px);}
+    }
+
+    .moving-text {
+      display: inline-block;
+      animation: moveRight 5s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes moveRight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100vw); }
+    }
+
+    .emoji {
+      font-size: 1.3em;
+      margin-right: 8px;
+      animation: spin 4s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -603,14 +719,18 @@
   <!-- Navigation Bar -->
   <nav class="navbar">
     <ul class="menu">
-      <li><a onclick="showTab('documentation')" class="active"><i class="icon-docs"></i> Documentation</a></li>
-      <li><a onclick="showTab('generator')"><i class="icon-chart"></i> Signal Generator</a></li>
-      <li><a onclick="loadContent('overview')"><i class="icon-overview"></i> Overview</a></li>
-      <li><a onclick="loadContent('core')"><i class="icon-components"></i> Core Components</a></li>
-      <li><a onclick="loadContent('signals')"><i class="icon-signals"></i> Signal Logic</a></li>
-      <li><a onclick="loadContent('rules')"><i class="icon-rules"></i> Trading Rules</a></li>
-      <li><a onclick="loadContent('custom')"><i class="icon-custom"></i> Customization</a></li>
-      <li><a onclick="loadContent('strengths')"><i class="icon-strengths"></i> Strengths & Limitations</a></li>
+      <ul class="menu">
+  <li><a onclick="showTab('volatility')" class="active"><i class="icon-chart"></i> Volatility Strategy</a></li>
+  <li><a onclick="showTab('documentation')"><i class="icon-docs"></i> Documentation</a></li>
+  <li><a onclick="showTab('generator')"><i class="icon-chart"></i> Signal Generator</a></li>
+  <li><a onclick="loadContent('overview')"><i class="icon-overview"></i> Overview</a></li>
+  <li><a onclick="loadContent('core')"><i class="icon-components"></i> Core Components</a></li>
+  <li><a onclick="loadContent('signals')"><i class="icon-signals"></i> Signal Logic</a></li>
+  <li><a onclick="loadContent('rules')"><i class="icon-rules"></i> Trading Rules</a></li>
+  <li><a onclick="loadContent('custom')"><i class="icon-custom"></i> Customization</a></li>
+  <li><a onclick="loadContent('strengths')"><i class="icon-strengths"></i> Strengths & Limitations</a></li>
+</ul>
+
     </ul>
   </nav>
 
@@ -661,7 +781,59 @@
     </div>
   </div>
 
-  
+  <div id="volatility" class="tab-content">
+    <!-- Volatility Trading Strategy Content -->
+    <div class="container">
+      <h1>Advanced Volatility Index Trading Strategy</h1>
+
+      <div class="strategy-card">
+        <p>This is a <span class="moving-text" style="color: #4fc3f7; animation-delay: 0s;">high-precision trading system</span> designed for volatility indices, combining <span class="moving-text" style="color: #81c784; animation-delay: 1s;">multiple technical indicators</span> with <span class="moving-text" style="color: #ffb74d; animation-delay: 2s;">adaptive logic</span> to generate high-probability trade signals.</p>
+      </div>
+
+      <h2 style="color: #4fc3f7; text-align: center; animation: glow 2s infinite alternate;">Key Features</h2>
+
+      <div class="feature-box" style="animation-delay: 0.2s;">
+        <div class="feature-title"><span class="emoji">✅</span> Adaptive Market Response</div>
+        <p>Automatically adjusts to changing volatility, tightening stops in erratic markets and widening them in stable conditions.</p>
+      </div>
+
+      <div class="feature-box" style="animation-delay: 0.4s;">
+        <div class="feature-title"><span class="emoji">✅</span> Volume Confirmation</div>
+        <p>Filters out false breakouts by requiring strong volume to validate price movements.</p>
+      </div>
+
+      <div class="feature-box" style="animation-delay: 0.6s;">
+        <div class="feature-title"><span class="emoji">✅</span> Multi-Timeframe Flexibility</div>
+        <p>Works on <strong>D1 (swing trades), H4 (intraday), and M15 (scalping)</strong> — scalable for different trading styles.</p>
+      </div>
+
+      <div class="feature-box" style="animation-delay: 0.8s;">
+        <div class="feature-title"><span class="emoji">✅</span> Price Action Alignment</div>
+        <p>Only triggers signals that align with candlestick patterns and trend structure, avoiding reckless entries.</p>
+      </div>
+
+      <div class="feature-box" style="animation-delay: 1s;">
+        <div class="feature-title"><span class="emoji">✅</span> Dynamic Risk Management</div>
+        <p>Adjusts position sizing and take-profit ratios based on real-time volatility, locking in gains faster when momentum spikes.</p>
+      </div>
+
+      <h2 style="color: #81c784; text-align: center; margin-top: 40px; animation: glow 2s infinite alternate;">Why This Strategy Wins</h2>
+
+      <div class="strategy-card" style="animation: slideIn 1s ease-out;">
+        <p><span style="color: #ffb74d; font-weight: bold;">🔹 No FOMO Trading</span> – Avoids weak setups, only entering when all conditions align.</p>
+        <p><span style="color: #ffb74d; font-weight: bold;">🔹 Backtested & Reliable</span> – Rigorously tested across different market phases to ensure consistency.</p>
+        <p><span style="color: #ffb74d; font-weight: bold;">🔹 Smart Liquidity Filters</span> – Avoids low-volume periods (like overnight sessions) unless the setup is exceptionally strong.</p>
+      </div>
+
+      <div class="verdict">
+        This isn't just another indicator-based system — it's an <span style="color: #4fc3f7; font-weight: bold;">intelligent, self-adjusting trading engine</span> that evolves with market conditions. Whether you're a <span style="color: #81c784;">day trader, swing trader, or scalper</span>, this strategy provides <span style="color: #ffb74d;">clear, high-confidence signals</span> while minimizing emotional decision-making.
+      </div>
+
+      <div class="ready">
+        Ready to trade smarter? 🚀
+      </div>
+    </div>
+  </div>
 
   <script>
     // Tab functionality
@@ -670,10 +842,10 @@
       document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
       });
-      
+
       // Show the selected tab content
       document.getElementById(tabId).classList.add('active');
-      
+
       // If showing generator tab, initialize it
       if (tabId === 'generator') {
         initializeGenerator();
@@ -802,11 +974,11 @@
 
     // Signal Generator Code
     let generatorInitialized = false;
-    
+
     function initializeGenerator() {
       if (generatorInitialized) return;
       generatorInitialized = true;
-      
+
       const volatilities = [
         { symbol: '1HZ10V', name: 'Vol 10 (1s)', barrierHigher: -0.48, barrierLower: 0.48 },
         { symbol: '1HZ25V', name: 'Vol 25 (1s)', barrierHigher: -80, barrierLower: 80 },
@@ -844,7 +1016,7 @@
           this.volatilityPeriod = 10;
           this.volatilityHistory = [];
         }
-        
+
         update(price) {
           // Update volatility measure
           if (this.prevPrice !== null) {
@@ -856,19 +1028,19 @@
             this.volatility = this.volatilityHistory.reduce((sum, val) => sum + val, 0) / this.volatilityHistory.length;
           }
           this.prevPrice = price;
-          
+
           // Adaptive period adjustment based on volatility
           let period = this.basePeriod;
           if (this.adaptive && this.volatility > 0) {
             // More volatile markets use shorter periods
             period = Math.max(5, Math.min(this.basePeriod, Math.round(this.basePeriod * (1 - this.volatility * 5))));
           }
-          
+
           const multiplier = 2 / (period + 1);
           this.ema = this.ema === null ? price : (price - this.ema) * multiplier + this.ema;
           return this.ema;
         }
-        
+
         getCurrent() {
           return this.ema;
         }
@@ -877,31 +1049,31 @@
       // Enhanced MACD with adaptive parameters
       class EnhancedMACD {
         constructor() {
-          this.fastEMA = new EnhancedEMA(12, true);
-          this.slowEMA = new EnhancedEMA(26, true);
-          this.signalEMA = new EnhancedEMA(9, true);
+          this.fastEMA = new EnhancedEMA(8, true);
+          this.slowEMA = new EnhancedEMA(15, true);
+          this.signalEMA = new EnhancedEMA(4, true);
           this.history = [];
           this.maxHistory = 15;
           this.divergenceHistory = [];
         }
-        
+
         update(price) {
           const fast = this.fastEMA.update(price);
           const slow = this.slowEMA.update(price);
           const macdLine = fast - slow;
           const signalLine = this.signalEMA.update(macdLine);
           const histogram = macdLine - signalLine;
-          
+
           // Track direction changes
           const currentDirection = macdLine > signalLine ? 'up' : 'down';
           const prevDirection = this.history.length > 0 ? this.history[this.history.length - 1].direction : null;
-          
+
           // Detect divergences
           if (this.history.length >= 3) {
             const prev1 = this.history[this.history.length - 1];
             const prev2 = this.history[this.history.length - 2];
             const prev3 = this.history[this.history.length - 3];
-            
+
             // Regular bullish divergence (price makes lower low, MACD makes higher low)
             if (price < prev1.price && macdLine > prev1.macdLine) {
               this.divergenceHistory.push({ type: 'bullish', time: Date.now() });
@@ -919,7 +1091,7 @@
               this.divergenceHistory.push({ type: 'hidden_bearish', time: Date.now() });
             }
           }
-          
+
           this.history.push({
             price,
             macdLine,
@@ -928,14 +1100,14 @@
             direction: currentDirection,
             momentum: histogram - (this.history.length > 0 ? this.history[this.history.length - 1].histogram : 0)
           });
-          
+
           if (this.history.length > this.maxHistory) {
             this.history.shift();
           }
-          
+
           // Keep only recent divergences
           this.divergenceHistory = this.divergenceHistory.filter(d => Date.now() - d.time < 60000);
-          
+
           return {
             macdLine,
             signalLine,
@@ -946,14 +1118,14 @@
             divergences: [...this.divergenceHistory]
           };
         }
-        
+
         getDirection() {
           if (this.history.length < 2) return 'neutral';
           const current = this.history[this.history.length - 1].direction;
           const prev = this.history[this.history.length - 2].direction;
           return current === prev ? current : 'neutral';
         }
-        
+
         calculateStrength(macdLine, signalLine) {
           const diff = Math.abs(macdLine - signalLine);
           const maxDiff = Math.max(0.5, diff * 2);
@@ -973,29 +1145,29 @@
           this.adaptiveOversold = 30;
           this.priceHistory = [];
         }
-        
+
         update(price) {
           if (this.prevPrice === null) {
             this.prevPrice = price;
             this.priceHistory.push(price);
             return null;
           }
-          
+
           const change = price - this.prevPrice;
           this.prevPrice = price;
           this.priceHistory.push(price);
-          
+
           if (this.priceHistory.length > 50) {
             this.priceHistory.shift();
           }
-          
+
           // Adjust overbought/oversold levels based on market conditions
           if (this.priceHistory.length >= 20) {
             const recentPrices = this.priceHistory.slice(-20);
             const maxPrice = Math.max(...recentPrices);
             const minPrice = Math.min(...recentPrices);
             const range = maxPrice - minPrice;
-            
+
             if (range > 0) {
               // In trending markets, widen the thresholds
               const trendStrength = (maxPrice - minPrice) / (this.priceHistory[this.priceHistory.length - 20]);
@@ -1003,25 +1175,25 @@
               this.adaptiveOversold = Math.max(20, 30 - trendStrength * 20);
             }
           }
-          
+
           const gain = change > 0 ? change : 0;
           const loss = change < 0 ? -change : 0;
-          
+
           this.gains.push(gain);
           this.losses.push(loss);
-          
+
           if (this.gains.length > this.period) {
             this.gains.shift();
             this.losses.shift();
           }
-          
+
           if (this.gains.length < this.period) {
             return null;
           }
-          
+
           const avgGain = this.gains.reduce((sum, val) => sum + val, 0) / this.period;
           const avgLoss = this.losses.reduce((sum, val) => sum + val, 0) / this.period;
-          
+
           this.rsi = avgLoss === 0 ? 100 : 100 - (100 / (1 + (avgGain / avgLoss)));
           return {
             value: this.rsi,
@@ -1031,7 +1203,7 @@
             oversoldLevel: this.adaptiveOversold
           };
         }
-        
+
         getCurrent() {
           return this.rsi;
         }
@@ -1050,29 +1222,29 @@
           this.adaptiveOverbought = 80;
           this.adaptiveOversold = 20;
         }
-        
+
         update(price, high, low) {
           this.closes.push(price);
           this.highs.push(high);
           this.lows.push(low);
-          
+
           if (this.closes.length > this.period) {
             this.closes.shift();
             this.highs.shift();
             this.lows.shift();
           }
-          
+
           if (this.closes.length < this.period) {
             return { k: null, d: null };
           }
-          
+
           const highestHigh = Math.max(...this.highs);
           const lowestLow = Math.min(...this.lows);
           const currentClose = this.closes[this.closes.length - 1];
-          
+
           // Calculate %K
           let k = ((currentClose - lowestLow) / (highestHigh - lowestLow)) * 100;
-          
+
           // Adaptive levels based on recent volatility
           if (this.closes.length >= 20) {
             const recentCloses = this.closes.slice(-20);
@@ -1081,28 +1253,28 @@
             const range = maxClose - minClose;
             const avgClose = recentCloses.reduce((sum, val) => sum + val, 0) / recentCloses.length;
             const volatility = range / avgClose;
-            
+
             // Adjust thresholds based on volatility
             this.adaptiveOverbought = Math.min(85, 80 + volatility * 100);
             this.adaptiveOversold = Math.max(15, 20 - volatility * 100);
           }
-          
+
           this.kValues.push(k);
-          
+
           if (this.kValues.length > this.smoothing) {
             this.kValues.shift();
           }
-          
+
           let d = null;
           if (this.kValues.length >= this.smoothing) {
             d = this.kValues.reduce((sum, val) => sum + val, 0) / this.smoothing;
             this.dValues.push(d);
-            
+
             if (this.dValues.length > 2) {
               this.dValues.shift();
             }
           }
-          
+
           return {
             k,
             d,
@@ -1132,7 +1304,7 @@
           this.minusDI = null;
           this.trendQuality = 0; // 0-1 scale of trend quality
         }
-        
+
         update(high, low, close) {
           if (this.prevHigh === null) {
             this.prevHigh = high;
@@ -1140,35 +1312,35 @@
             this.prevClose = close;
             return null;
           }
-          
+
           // Calculate True Range
           const tr = Math.max(
             high - low,
             Math.abs(high - this.prevClose),
             Math.abs(low - this.prevClose)
           );
-          
+
           // Calculate Directional Movements
           const upMove = high - this.prevHigh;
           const downMove = this.prevLow - low;
-          
+
           let plusDM = 0;
           let minusDM = 0;
-          
+
           if (upMove > downMove && upMove > 0) {
             plusDM = upMove;
           }
-          
+
           if (downMove > upMove && downMove > 0) {
             minusDM = downMove;
           }
-          
+
           // Smooth the values
           if (this.trValues.length < this.period) {
             this.trValues.push(tr);
             this.plusDMValues.push(plusDM);
             this.minusDMValues.push(minusDM);
-            
+
             if (this.trValues.length === this.period) {
               this.smoothedTR = this.trValues.reduce((sum, val) => sum + val, 0);
               this.smoothedPlusDM = this.plusDMValues.reduce((sum, val) => sum + val, 0);
@@ -1179,36 +1351,36 @@
             this.smoothedPlusDM = this.smoothedPlusDM - (this.smoothedPlusDM / this.period) + plusDM;
             this.smoothedMinusDM = this.smoothedMinusDM - (this.smoothedMinusDM / this.period) + minusDM;
           }
-          
+
           this.prevHigh = high;
           this.prevLow = low;
           this.prevClose = close;
-          
+
           if (this.trValues.length < this.period) {
             return null;
           }
-          
+
           // Calculate +DI and -DI
           this.plusDI = (this.smoothedPlusDM / this.smoothedTR) * 100;
           this.minusDI = (this.smoothedMinusDM / this.smoothedTR) * 100;
-          
+
           // Calculate DX
           const dx = (Math.abs(this.plusDI - this.minusDI) / (this.plusDI + this.minusDI)) * 100;
-          
+
           // Calculate ADX
           if (this.adx === null) {
             this.adx = dx;
           } else {
             this.adx = ((this.adx * (this.period - 1)) + dx) / this.period;
           }
-          
+
           // Calculate trend quality (how consistent the trend is)
           if (this.plusDI > this.minusDI) {
             this.trendQuality = Math.min(1, (this.plusDI - this.minusDI) / 20);
           } else {
             this.trendQuality = Math.min(1, (this.minusDI - this.plusDI) / 20);
           }
-          
+
           return {
             plusDI: this.plusDI,
             minusDI: this.minusDI,
@@ -1230,18 +1402,18 @@
           this.prices = [];
           this.volatilityHistory = [];
         }
-        
+
         update(price) {
           this.prices.push(price);
-          
+
           if (this.prices.length > this.period) {
             this.prices.shift();
           }
-          
+
           if (this.prices.length < this.period) {
             return null;
           }
-          
+
           // Calculate volatility
           if (this.prices.length >= 2) {
             const changes = [];
@@ -1253,17 +1425,17 @@
             if (this.volatilityHistory.length > 10) {
               this.volatilityHistory.shift();
             }
-            
+
             // Adjust multiplier based on volatility
             const avgVolatility = this.volatilityHistory.reduce((sum, val) => sum + val, 0) / this.volatilityHistory.length;
             this.adaptiveMultiplier = this.baseMultiplier * (1 + avgVolatility * 5);
           }
-          
+
           const sum = this.prices.reduce((a, b) => a + b, 0);
           const sma = sum / this.period;
           const variance = this.prices.reduce((a, b) => a + Math.pow(b - sma, 2), 0) / this.period;
           const stdDev = Math.sqrt(variance);
-          
+
           return {
             upper: sma + (this.adaptiveMultiplier * stdDev),
             middle: sma,
@@ -1284,22 +1456,22 @@
           this.priceVolumeHistory = [];
           this.volumeHistory = [];
         }
-        
+
         update(price, volume) {
           this.priceVolumeSum += price * volume;
           this.volumeSum += volume;
           this.priceVolumeHistory.push(price * volume);
           this.volumeHistory.push(volume);
-          
+
           if (this.priceVolumeHistory.length > this.period) {
             this.priceVolumeSum -= this.priceVolumeHistory.shift();
             this.volumeSum -= this.volumeHistory.shift();
           }
-          
+
           if (this.volumeHistory.length < this.period) {
             return null;
           }
-          
+
           return this.priceVolumeSum / this.volumeSum;
         }
       }
@@ -1311,31 +1483,31 @@
           this.pvt = 0;
           this.pvtHistory = [];
         }
-        
+
         update(price, volume) {
           if (this.prevPrice === null) {
             this.prevPrice = price;
             return null;
           }
-          
+
           const priceChange = price - this.prevPrice;
           this.prevPrice = price;
-          
+
           if (priceChange !== 0) {
             const pvtChange = (priceChange / this.prevPrice) * volume;
             this.pvt += pvtChange;
           }
-          
+
           this.pvtHistory.push(this.pvt);
           if (this.pvtHistory.length > 20) {
             this.pvtHistory.shift();
           }
-          
+
           return {
             value: this.pvt,
-            direction: this.pvtHistory.length >= 2 ? 
+            direction: this.pvtHistory.length >= 2 ?
               (this.pvt > this.pvtHistory[this.pvtHistory.length - 2] ? 'up' : 'down') : 'neutral',
-            strength: this.pvtHistory.length >= 5 ? 
+            strength: this.pvtHistory.length >= 5 ?
               (this.pvt - Math.min(...this.pvtHistory)) / (Math.max(...this.pvtHistory) - Math.min(...this.pvtHistory)) : 0
           };
         }
@@ -1349,37 +1521,37 @@
           this.highHistory = [];
           this.lowHistory = [];
         }
-        
+
         update(price, high, low) {
           this.priceHistory.push(price);
           this.highHistory.push(high);
           this.lowHistory.push(low);
-          
+
           if (this.priceHistory.length > this.lookback) {
             this.priceHistory.shift();
             this.highHistory.shift();
             this.lowHistory.shift();
           }
-          
+
           if (this.priceHistory.length < this.lookback) {
             return null;
           }
-          
+
           // Detect patterns
           const patterns = [];
-          
+
           // 1. Double Top/Bottom
           if (this.priceHistory.length >= 10) {
             const recentPrices = this.priceHistory.slice(-10);
             const recentHighs = this.highHistory.slice(-10);
             const recentLows = this.lowHistory.slice(-10);
-            
+
             const maxHigh = Math.max(...recentHighs);
             const minLow = Math.min(...recentLows);
             const range = maxHigh - minLow;
             const avgPrice = recentPrices.reduce((sum, p) => sum + p, 0) / recentPrices.length;
             const rangePercent = (range / avgPrice) * 100;
-            
+
             // Check if price range is small enough
             if (rangePercent <= CONSOLIDATION_RANGE_PERCENT) {
               // Double Top (bearish)
@@ -1389,13 +1561,13 @@
                   peaks.push(recentHighs[i]);
                 }
               }
-              
-              if (peaks.length >= 2 && 
-                  Math.abs(peaks[0] - peaks[1]) / peaks[0] < 0.01 && 
+
+              if (peaks.length >= 2 &&
+                  Math.abs(peaks[0] - peaks[1]) / peaks[0] < 0.01 &&
                   recentPrices[recentPrices.length-1] < recentPrices[recentPrices.length-10]) {
                 patterns.push({ name: 'Double Top', type: 'bearish', confidence: 0.7 });
               }
-              
+
               // Double Bottom (bullish)
               const troughs = [];
               for (let i = 1; i < recentLows.length - 1; i++) {
@@ -1403,19 +1575,19 @@
                   troughs.push(recentLows[i]);
                 }
               }
-              
-              if (troughs.length >= 2 && 
-                  Math.abs(troughs[0] - troughs[1]) / troughs[0] < 0.01 && 
+
+              if (troughs.length >= 2 &&
+                  Math.abs(troughs[0] - troughs[1]) / troughs[0] < 0.01 &&
                   recentPrices[recentPrices.length-1] > recentPrices[recentPrices.length-10]) {
                 patterns.push({ name: 'Double Bottom', type: 'bullish', confidence: 0.7 });
               }
             }
           }
-          
+
           // 2. Head and Shoulders
           if (this.priceHistory.length >= 15) {
             const recentHighs = this.highHistory.slice(-15);
-            
+
             // Find potential shoulders and head
             const peaks = [];
             for (let i = 1; i < recentHighs.length - 1; i++) {
@@ -1423,7 +1595,7 @@
                 peaks.push({ index: i, value: recentHighs[i] });
               }
             }
-            
+
             if (peaks.length >= 3) {
               // Check if middle peak is higher than others (head)
               if (peaks[1].value > peaks[0].value && peaks[1].value > peaks[2].value) {
@@ -1433,7 +1605,7 @@
                   const necklineStart = this.lowHistory[this.lowHistory.length - 15 + peaks[0].index];
                   const necklineEnd = this.lowHistory[this.lowHistory.length - 15 + peaks[2].index];
                   const currentPrice = this.priceHistory[this.priceHistory.length-1];
-                  
+
                   if (currentPrice < necklineStart && currentPrice < necklineEnd) {
                     patterns.push({ name: 'Head and Shoulders', type: 'bearish', confidence: 0.8 });
                   }
@@ -1441,12 +1613,12 @@
               }
             }
           }
-          
+
           // 3. Triangle patterns
           if (this.priceHistory.length >= 12) {
             const upperTrend = this.calculateTrend(this.highHistory.slice(-12), false);
             const lowerTrend = this.calculateTrend(this.lowHistory.slice(-12), true);
-            
+
             // Symmetrical triangle (both trendlines converging)
             if (upperTrend.slope < 0 && lowerTrend.slope > 0) {
               patterns.push({ name: 'Symmetrical Triangle', type: 'neutral', confidence: 0.6 });
@@ -1460,35 +1632,35 @@
               patterns.push({ name: 'Descending Triangle', type: 'bearish', confidence: 0.7 });
             }
           }
-          
+
           // Return the highest confidence pattern
           if (patterns.length > 0) {
             patterns.sort((a, b) => b.confidence - a.confidence);
             return patterns[0];
           }
-          
+
           return null;
         }
-        
+
         calculateTrend(points, isSupport) {
           const n = points.length;
           let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
-          
+
           for (let i = 0; i < n; i++) {
             sumX += i;
             sumY += points[i];
             sumXY += i * points[i];
             sumXX += i * i;
           }
-          
+
           const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
           const intercept = (sumY - slope * sumX) / n;
-          
+
           // For support/resistance, we want the most recent point to be the most relevant
-          const adjustedIntercept = isSupport ? 
-            Math.min(...points) : 
+          const adjustedIntercept = isSupport ?
+            Math.min(...points) :
             Math.max(...points);
-          
+
           return {
             slope,
             intercept: adjustedIntercept,
@@ -1506,21 +1678,21 @@
             'long': { period: 30, data: [] }
           };
         }
-        
+
         update(price) {
           const trends = {};
-          
+
           for (const [key, tf] of Object.entries(this.timeframes)) {
             tf.data.push(price);
-            
+
             if (tf.data.length > tf.period) {
               tf.data.shift();
             }
-            
+
             if (tf.data.length >= tf.period) {
               const sma = tf.data.reduce((sum, val) => sum + val, 0) / tf.data.length;
               const currentPrice = tf.data[tf.data.length - 1];
-              
+
               trends[key] = {
                 direction: currentPrice > sma ? 'up' : 'down',
                 strength: Math.abs(currentPrice - sma) / sma,
@@ -1528,18 +1700,18 @@
               };
             }
           }
-          
+
           return trends;
         }
-        
+
         calculateAngle(points) {
           if (points.length < 2) return 0;
-          
+
           const firstPrice = points[0];
           const lastPrice = points[points.length - 1];
           const priceChange = lastPrice - firstPrice;
           const percentChange = priceChange / firstPrice;
-          
+
           // Convert to "degrees" (arbitrary scale)
           return percentChange * 100;
         }
@@ -1563,25 +1735,25 @@
               <div class="data-item"><span class="data-label">Stoch:</span><span id="stoch-${v.symbol}" class="indicator-value">-</span></div>
               <div class="data-item"><span class="data-label">Volume:</span><span id="volume-${v.symbol}" class="indicator-value">-</span></div>
             </div>
-            
+
             <div class="indicator-row">
               <span class="indicator-name">MACD Strength</span>
               <span class="indicator-strength" id="macd-strength-${v.symbol}">-</span>
             </div>
             <div id="macd-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
-            
+
             <div class="indicator-row">
               <span class="indicator-name">Trend Strength</span>
               <span class="indicator-strength" id="trend-strength-${v.symbol}">-</span>
             </div>
             <div id="trend-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
-            
+
             <div class="indicator-row">
               <span class="indicator-name">Volume Trend</span>
               <span class="indicator-strength" id="volume-trend-${v.symbol}">-</span>
             </div>
             <div id="volume-bar-${v.symbol}" class="indicator-bar neutral-bar"></div>
-            
+
             <div class="barrier-inputs">
               <div class="barrier-group">
                 <span class="barrier-label">HIGHER</span>
@@ -1592,12 +1764,12 @@
                 <input type="number" step="0.01" class="barrier-input" id="barrier-lower-${v.symbol}" value="${v.barrierLower}" />
               </div>
             </div>
-            
+
             <div class="confidence-meter">
               <div id="confidence-fill-${v.symbol}" class="confidence-fill"></div>
             </div>
             <div id="confidence-label-${v.symbol}" class="confidence-label">Confidence: 0%</div>
-            
+
             <div id="signal-text-${v.symbol}" class="signal-area signal-waiting">ANALYZING</div>
             <div id="countdown-${v.symbol}" class="countdown"></div>
             <div id="signal-explanation-${v.symbol}" class="signal-explanation"></div>
@@ -1654,7 +1826,7 @@
       function connectWebSocket() {
         updateStatus('connecting', 'Connecting...');
         if(ws) ws.close();
-        
+
         ws = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089');
         ws.onopen = () => {
           updateStatus('connected', 'Connected');
@@ -1691,44 +1863,44 @@
 
       function checkConsolidation(data) {
         if (data.closes.length < CONSOLIDATION_PERIOD) return false;
-        
+
         // Get the recent price range
         const recentCloses = data.closes.slice(-CONSOLIDATION_PERIOD);
         const recentHighs = data.highs.slice(-CONSOLIDATION_PERIOD);
         const recentLows = data.lows.slice(-CONSOLIDATION_PERIOD);
-        
+
         const maxHigh = Math.max(...recentHighs);
         const minLow = Math.min(...recentLows);
         const range = maxHigh - minLow;
         const avgPrice = recentCloses.reduce((sum, p) => sum + p, 0) / recentCloses.length;
         const rangePercent = (range / avgPrice) * 100;
-        
+
         // Check if price range is small enough
         if (rangePercent > CONSOLIDATION_RANGE_PERCENT) return false;
-        
+
         // Check indicators for neutral conditions
         const macd = data.macdCalc;
         const rsi = data.rsiCalc.getCurrent();
         const adx = data.adxCalc;
         const bb = data.bbCalc;
         const stoch = data.stochCalc;
-        
+
         // MACD histogram near zero
         if (Math.abs(macd.histogram) > 0.5) return false;
-        
+
         // RSI in middle range
-        if (rsi < 40 || rsi > 60) return false;
-        
+        if (rsi < 20 || rsi > 80) return false;
+
         // ADX shows weak trend
         if (adx.adx > 20) return false;
-        
+
         // Bollinger Bands %B near middle
         const bbPercent = bb.percentB;
         if (bbPercent < 0.4 || bbPercent > 0.6) return false;
-        
+
         // Stochastic in middle range
-        if (stoch.k < 40 || stoch.k > 60 || stoch.d < 40 || stoch.d > 60) return false;
-        
+        if (stoch.k < 20 || stoch.k > 80 || stoch.d < 20 || stoch.d > 80) return false;
+
         return true;
       }
 
@@ -1743,12 +1915,12 @@
         const low = price;
         // Simulate volume (since we don't have real volume data for these indices)
         const volume = 1000 + Math.round(Math.random() * 5000);
-        
+
         d.closes.push(price);
         d.highs.push(high);
         d.lows.push(low);
         d.volumes.push(volume);
-        
+
         // Keep only recent data to manage memory
         if(d.closes.length > 200) {
           d.closes.shift();
@@ -1760,62 +1932,62 @@
         // Update UI with current price and volume
         d.ui.price.textContent = price.toFixed(3);
         d.ui.volume.textContent = volume.toFixed(0);
-        
+
         // Update MACD indicators
         const macd = d.macdCalc.update(price);
         d.ui.macdLine.textContent = macd.macdLine.toFixed(3);
         d.ui.signalLine.textContent = macd.signalLine.toFixed(3);
         d.ui.histogram.textContent = macd.histogram.toFixed(3);
-        
+
         // Update MACD strength visualization
         if (macd.strength !== undefined) {
           d.ui.macdStrength.textContent = `${Math.round(macd.strength * 100)}%`;
           d.ui.macdBar.className = `indicator-bar ${macd.direction === 'up' ? 'positive-bar' : 'negative-bar'}`;
           d.ui.macdBar.style.width = `${macd.strength * 100}%`;
         }
-        
+
         // Update RSI
         const rsi = d.rsiCalc.update(price);
         if (rsi !== null) {
           d.ui.rsi.textContent = rsi.value.toFixed(1);
           if (rsi.isOverbought) d.ui.rsi.style.color = '#f00';
           else if (rsi.isOversold) d.ui.rsi.style.color = '#0f0';
-          else d.ui.rsi.style.color = 'white';
+          else d.ui.rsi.style.color = 'pink';
         }
-        
+
         // Update Stochastic Oscillator
         const stoch = d.stochCalc.update(price, high, low);
         if (stoch.k !== null && stoch.d !== null) {
           d.ui.stoch.textContent = `${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)}`;
           if (stoch.isOverbought) d.ui.stoch.style.color = '#f00';
           else if (stoch.isOversold) d.ui.stoch.style.color = '#0f0';
-          else d.ui.stoch.style.color = 'white';
+          else d.ui.stoch.style.color = 'blue';
         }
-        
+
         // Update ADX
         const adx = d.adxCalc.update(high, low, price);
         if (adx !== null) {
           d.ui.adx.textContent = `${adx.adx.toFixed(1)} (${adx.trendDirection})`;
-          
+
           // Update trend strength visualization
           const trendStrengthValue = Math.min(adx.adx / 50, 1); // Cap at 50 for visualization
           d.ui.trendStrength.textContent = `${adx.trendStrength}`;
           d.ui.trendBar.className = `indicator-bar ${adx.trendDirection === 'up' ? 'positive-bar' : 'negative-bar'}`;
           d.ui.trendBar.style.width = `${trendStrengthValue * 100}%`;
         }
-        
+
         // Update Bollinger Bands
         const bb = d.bbCalc.update(price);
         if (bb !== null) {
           d.ui.bbPercent.textContent = bb.percentB.toFixed(2);
           if (bb.percentB > 0.8) d.ui.bbPercent.style.color = '#f00';
           else if (bb.percentB < 0.2) d.ui.bbPercent.style.color = '#0f0';
-          else d.ui.bbPercent.style.color = 'white';
+          else d.ui.bbPercent.style.color = 'olive';
         }
-        
+
         // Update Volume Weighted MA
         const vwma = d.vwmaCalc.update(price, volume);
-        
+
         // Update Price Volume Trend
         const pvt = d.pvtCalc.update(price, volume);
         if (pvt !== null) {
@@ -1823,7 +1995,7 @@
           d.ui.volumeBar.className = `indicator-bar ${pvt.direction === 'up' ? 'positive-bar' : 'negative-bar'}`;
           d.ui.volumeBar.style.width = `${pvt.strength * 100}%`;
         }
-        
+
         // Update Pattern Recognition
         d.pattern = d.patternCalc.update(price, high, low);
         if (d.pattern) {
@@ -1833,10 +2005,10 @@
           d.ui.patternIndicator.textContent = 'No Pattern';
           d.ui.patternIndicator.className = 'pattern-indicator pattern-neutral';
         }
-        
+
         // Update Time-based Trends
         d.timeTrends = d.timeTrendCalc.update(price);
-        
+
         // Check for consolidation first
         const isConsolidating = checkConsolidation(d);
         if (isConsolidating) {
@@ -1853,7 +2025,7 @@
         } else {
           d.consolidationCount = 0;
         }
-        
+
         // Only generate signals if we have enough data
         if (d.closes.length >= MIN_DATA_POINTS && rsi !== null && adx !== null && bb !== null && stoch.k !== null) {
           // Calculate signal strength (0-1)
@@ -1862,7 +2034,7 @@
           let confirmationReasons = [];
           let confidenceScore = 0;
           let totalWeight = 0;
-          
+
           // 1. MACD confirmation (20% weight)
           if (macd.direction === 'up' && macd.histogram > 0) {
             const macdWeight = 0.2 * macd.strength;
@@ -1871,7 +2043,7 @@
             totalWeight += 0.2;
             signalDirection = 'up';
             confirmationReasons.push(`MACD bullish (${Math.round(macd.strength * 100)}%)`);
-            
+
             // Check for divergences
             if (macd.divergences.some(d => d.type.includes('bullish'))) {
               signalStrength += 0.05;
@@ -1885,7 +2057,7 @@
             totalWeight += 0.2;
             signalDirection = 'down';
             confirmationReasons.push(`MACD bearish (${Math.round(macd.strength * 100)}%)`);
-            
+
             // Check for divergences
             if (macd.divergences.some(d => d.type.includes('bearish'))) {
               signalStrength += 0.05;
@@ -1893,7 +2065,7 @@
               confirmationReasons.push('Bearish divergence');
             }
           }
-          
+
           // 2. RSI confirmation (15% weight)
           if (rsi.isOversold) {
             const rsiWeight = 0.15;
@@ -1909,27 +2081,27 @@
             totalWeight += 0.15;
             signalDirection = 'down';
             confirmationReasons.push(`RSI overbought (${rsi.value.toFixed(1)})`);
-          } else if (rsi.value < 50 && signalDirection === 'up') {
+          } else if (rsi.value < 30 && signalDirection === 'up') {
             const rsiWeight = 0.05;
             signalStrength += rsiWeight;
             confidenceScore += rsiWeight * 0.5;
             totalWeight += 0.05;
             confirmationReasons.push(`RSI below mid (${rsi.value.toFixed(1)})`);
-          } else if (rsi.value > 50 && signalDirection === 'down') {
+          } else if (rsi.value > 70 && signalDirection === 'down') {
             const rsiWeight = 0.05;
             signalStrength += rsiWeight;
             confidenceScore += rsiWeight * 0.5;
             totalWeight += 0.05;
             confirmationReasons.push(`RSI above mid (${rsi.value.toFixed(1)})`);
           }
-          
+
           // 3. ADX trend confirmation (20% weight)
           if (adx.trendStrength !== 'weak') {
             const adxWeight = 0.2 * (adx.adx / 50);
             signalStrength += adxWeight;
             confidenceScore += adxWeight * adx.trendQuality;
             totalWeight += 0.2;
-            
+
             if (adx.trendDirection === 'up' && signalDirection !== 'down') {
               signalDirection = 'up';
               confirmationReasons.push(`ADX ${adx.trendStrength} uptrend (${adx.adx.toFixed(1)})`);
@@ -1938,7 +2110,7 @@
               confirmationReasons.push(`ADX ${adx.trendStrength} downtrend (${adx.adx.toFixed(1)})`);
             }
           }
-          
+
           // 4. Bollinger Bands confirmation (15% weight)
           if (bb.percentB < 0.2) {
             const bbWeight = 0.15;
@@ -1960,7 +2132,7 @@
             confidenceScore += 0.05;
             confirmationReasons.push('BB squeeze (potential breakout)');
           }
-          
+
           // 5. Stochastic confirmation (10% weight)
           if (stoch.isOversold) {
             const stochWeight = 0.1;
@@ -1977,7 +2149,7 @@
             signalDirection = 'down';
             confirmationReasons.push(`Stoch overbought (${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)})`);
           }
-          
+
           // 6. Volume confirmation (10% weight from settings)
           if (pvt !== null) {
             const volumeWeight = settings.volumeWeight / 100;
@@ -1988,11 +2160,11 @@
               confirmationReasons.push(`Volume ${pvt.direction}`);
             }
           }
-          
+
           // 7. Pattern recognition confirmation (10% weight)
           if (d.pattern && settings.patternRecognition) {
             const patternWeight = 0.1;
-            if ((d.pattern.type === 'bullish' && signalDirection === 'up') || 
+            if ((d.pattern.type === 'bullish' && signalDirection === 'up') ||
                 (d.pattern.type === 'bearish' && signalDirection === 'down')) {
               signalStrength += patternWeight;
               confidenceScore += patternWeight * d.pattern.confidence;
@@ -2000,20 +2172,20 @@
               confirmationReasons.push(`${d.pattern.name} pattern`);
             }
           }
-          
+
           // 8. Time trend confirmation (10% weight from settings)
           if (Object.keys(d.timeTrends).length > 0 && settings.timeFilter) {
             const trendWeight = settings.trendWeight / 100;
             let trendAgreement = 0;
             let trendCount = 0;
-            
+
             for (const [tf, trend] of Object.entries(d.timeTrends)) {
               if (trend.direction === signalDirection) {
                 trendAgreement += trend.strength;
                 trendCount++;
               }
             }
-            
+
             if (trendCount > 0) {
               const avgAgreement = trendAgreement / trendCount;
               signalStrength += trendWeight;
@@ -2022,7 +2194,7 @@
               confirmationReasons.push(`Multi-timeframe ${signalDirection}`);
             }
           }
-          
+
           // Normalize signal strength and confidence
           if (totalWeight > 0) {
             signalStrength = signalStrength / totalWeight;
@@ -2031,11 +2203,11 @@
             signalStrength = 0;
             confidenceScore = 0;
           }
-          
+
           // Update confidence meter
           d.ui.confidenceFill.style.width = `${confidenceScore * 100}%`;
           d.ui.confidenceLabel.textContent = `Confidence: ${Math.round(confidenceScore * 100)}%`;
-          
+
           // Check for signal confirmation
           if (signalDirection === 'up') {
             if (d.lastSignal === 'HIGHER') {
@@ -2055,17 +2227,17 @@
             d.lastSignal = null;
             d.confirmationCount = 0;
           }
-          
+
           // Set signal explanation
-          d.ui.explanation.textContent = confirmationReasons.length > 0 ? 
+          d.ui.explanation.textContent = confirmationReasons.length > 0 ?
             confirmationReasons.join(', ') : 'No strong indicators yet';
-          
+
           // Only show signal after confirmation period and with sufficient strength
           if (d.confirmationCount >= settings.confirmationPeriod) {
             const barrier = parseFloat(
               document.getElementById(`barrier-${d.lastSignal.toLowerCase()}-${symbol}`).value
             );
-            
+
             if (confidenceScore >= settings.strongThreshold) {
               d.ui.signalText.textContent = `${d.lastSignal} @ ${barrier.toFixed(2)}`;
               if (confidenceScore >= VERY_STRONG_THRESHOLD) {
@@ -2075,13 +2247,13 @@
                 d.ui.signalText.className = `signal-area signal-${d.lastSignal.toLowerCase()}`;
                 d.ui.countdown.textContent = `Strong signal (${Math.round(confidenceScore * 100)}%)`;
               }
-            } 
+            }
             // Show building signal with orange color when confirmation is in progress
             else if (confidenceScore >= settings.weakThreshold) {
               d.ui.signalText.textContent = 'BUILDING SIGNAL';
               d.ui.signalText.className = 'signal-area signal-building';
-              d.ui.countdown.textContent = d.lastSignal ? 
-                `Confirming ${d.confirmationCount}/${settings.confirmationPeriod} (${Math.round(confidenceScore * 100)}%)` : 
+              d.ui.countdown.textContent = d.lastSignal ?
+                `Confirming ${d.confirmationCount}/${settings.confirmationPeriod} (${Math.round(confidenceScore * 100)}%)` :
                 'Analyzing market conditions';
             }
             // Show weak signal with yellow color when indicators show weak agreement
@@ -2098,8 +2270,8 @@
           } else {
             d.ui.signalText.textContent = 'ANALYZING';
             d.ui.signalText.className = 'signal-area signal-waiting';
-            d.ui.countdown.textContent = d.lastSignal ? 
-              `Confirming ${d.confirmationCount}/${settings.confirmationPeriod}` : 
+            d.ui.countdown.textContent = d.lastSignal ?
+              `Confirming ${d.confirmationCount}/${settings.confirmationPeriod}` :
               'Waiting for setup';
           }
         } else {
@@ -2116,20 +2288,20 @@
       // Initialize generator
       buildCards();
       connectWebSocket();
-      
+
       // Settings panel controls
       const settingsBtn = document.getElementById('settings-btn');
       const settingsPanel = document.getElementById('settings-panel');
       const closeSettings = document.getElementById('close-settings');
-      
+
       settingsBtn.addEventListener('click', () => {
         settingsPanel.style.display = 'block';
       });
-      
+
       closeSettings.addEventListener('click', () => {
         settingsPanel.style.display = 'none';
       });
-      
+
       // Update settings from inputs
       const settingsInputs = {
         'confirmation-period': 'confirmationPeriod',
@@ -2138,36 +2310,89 @@
         'volume-weight': 'volumeWeight',
         'trend-weight': 'trendWeight'
       };
-      
+
       Object.entries(settingsInputs).forEach(([id, key]) => {
         const input = document.getElementById(id);
         input.addEventListener('change', () => {
-          settings[key] = id.includes('threshold') ? 
-            parseInt(input.value) / 100 : 
+          settings[key] = id.includes('threshold') ?
+            parseInt(input.value) / 100 :
             parseInt(input.value);
         });
       });
-      
+
       // Add input change listeners for barriers
       volatilities.forEach(v => {
         const higherInput = document.getElementById(`barrier-higher-${v.symbol}`);
         const lowerInput = document.getElementById(`barrier-lower-${v.symbol}`);
-        
+
         higherInput.addEventListener('change', () => {
           v.barrierHigher = parseFloat(higherInput.value);
         });
-        
+
         lowerInput.addEventListener('change', () => {
           v.barrierLower = parseFloat(lowerInput.value);
         });
       });
     }
 
-    // Load default content on page load
-    window.onload = () => {
-      loadContent("overview");
-      showTab('documentation');
-    };
+    function showTab(tabId) {
+  // Hide all tab contents
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+  });
+
+  // Show the selected tab content
+  document.getElementById(tabId).classList.add('active');
+
+  // If showing generator tab, initialize it
+  if (tabId === 'generator') {
+    initializeGenerator();
+  }
+}
+
+// Load default content on page load
+window.onload = () => {
+  showTab('volatility'); // Default to the Volatility Strategy tab
+};
+
+
+    // Additional animation effects for Volatility Trading Strategy
+    document.addEventListener('DOMContentLoaded', function() {
+      const features = document.querySelectorAll('.feature-box');
+      features.forEach((feature, index) => {
+        feature.style.animationDelay = `${index * 0.2}s`;
+      });
+
+      // Create floating emojis
+      const emojis = ['📈', '💰', '⚡', '💵', '💸', '🎯'];
+      setInterval(() => {
+        const emoji = document.createElement('div');
+        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.style.position = 'fixed';
+        emoji.style.left = Math.random() * 100 + 'vw';
+        emoji.style.top = '-50px';
+        emoji.style.fontSize = (Math.random() * 20 + 10) + 'px';
+        emoji.style.opacity = Math.random() * 0.5 + 0.5;
+        emoji.style.animation = `fall ${Math.random() * 5 + 5}s linear forwards`;
+
+        document.body.appendChild(emoji);
+
+        setTimeout(() => {
+          emoji.remove();
+        }, 6000);
+      }, 500);
+    });
+
+    // Add falling animation
+    const style = document.createElement('style');
+    style.innerHTML = `
+      @keyframes fall {
+        to {
+          transform: translateY(100vh) rotate(360deg);
+        }
+      }
+    `;
+
   </script>
 </body>
 </html>
