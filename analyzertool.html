@@ -269,7 +269,7 @@
       color: #ff0;
       border: 1px solid rgba(255, 255, 0, 0.5);
       box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
-      text-shadow: 0 0 5px rgba(255, 255, 0, 0.5);
+      text-shadow: 0 0 5px rgba(255, 255, 0, 0.3);
       animation: pulse-weak 2s infinite;
     }
 
@@ -500,12 +500,11 @@
 
     .footer {
      position: absolute;
-      down: 5px;
+      bottom: 5px;
       background: #0d6efd;
       color: white;
       text-align: center;
       padding: 20px 0;
-
     }
 
     /* Tab system */
@@ -729,6 +728,152 @@
       pointer-events: none;
       z-index: 100;
     }
+
+    /* Styles for the new tab */
+    #digits-app {
+      height: calc(100vh - 16px);
+      max-width: 100%;
+      background: #12122a;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 120, 255, 0.7);
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      overflow: hidden;
+    }
+
+    .digit-selector {
+      padding: 10px;
+      background: #1a331c;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    .digit-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: #2a2a4a;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .digit-btn:hover {
+      background: #3a3a5a;
+    }
+
+    .digit-btn.active {
+      background: #2962ff;
+      box-shadow: 0 0 10px rgba(41, 98, 255, 0.7);
+    }
+
+    .digit-special-info {
+      padding: 10px;
+      background: #2a2a4a;
+      margin-top: 5px;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .special-digit-display {
+      font-weight: bold;
+      color: #00e0ff;
+    }
+
+    .special-strategy {
+      margin-top: 5px;
+      font-size: 12px;
+    }
+
+    .digit-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .digit-cell {
+      padding: 8px;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: bold;
+      background: #2a2a4a;
+    }
+
+    .low-prob {
+      background: #d50000;
+      color: white;
+    }
+
+    .med-prob {
+      background: #ff6d00;
+      color: white;
+    }
+
+    .high-prob {
+      background: #00c853;
+      color: white;
+    }
+
+    .prediction-header {
+      font-size: 16px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    .probability-scale {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 10px;
+      color: #aaa;
+    }
+
+    .last-digits {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #aaa;
+    }
+
+    .special-prediction {
+      margin-top: 8px;
+      padding: 8px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 5px;
+      font-size: 12px;
+    }
+
+    .special-advice {
+      color: #1aff00;
+      font-weight: bold;
+    }
+
+    .digit-probability {
+      height: 4px;
+      background: #444;
+      margin-top: 4px;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .digit-probability-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00c853, #ff6d00, #d50000);
+    }
+
+    .chart-container {
+      width: 100%;
+      height: 100px;
+      background: #2a2a4a;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
@@ -736,23 +881,21 @@
   <!-- Navigation Bar -->
   <nav class="navbar">
     <ul class="menu">
-      <ul class="menu">
-  <li><a onclick="showTab('volatility')" class="active"><i class="icon-chart"></i> Volatility Strategy</a></li>
-  <li><a onclick="showTab('documentation')"><i class="icon-docs"></i> Documentation</a></li>
-  <li><a onclick="showTab('generator')"><i class="icon-chart"></i> Signal Generator</a></li>
-  <li><a onclick="loadContent('overview')"><i class="icon-overview"></i> Overview</a></li>
-  <li><a onclick="loadContent('core')"><i class="icon-components"></i> Core Components</a></li>
-  <li><a onclick="loadContent('signals')"><i class="icon-signals"></i> Signal Logic</a></li>
-  <li><a onclick="loadContent('rules')"><i class="icon-rules"></i> Trading Rules</a></li>
-  <li><a onclick="loadContent('custom')"><i class="icon-custom"></i> Customization</a></li>
-  <li><a onclick="loadContent('strengths')"><i class="icon-strengths"></i> Strengths & Limitations</a></li>
-</ul>
-
+      <li><a onclick="showTab('volatility')" class="active"><i class="icon-chart"></i> Volatility Strategy</a></li>
+      <li><a onclick="showTab('documentation')"><i class="icon-docs"></i> Documentation</a></li>
+      <li><a onclick="showTab('generator')"><i class="icon-chart"></i> Signal Generator</a></li>
+      <li><a onclick="showTab('digits-analyzer')"><i class="icon-chart"></i> Digits Analyzer</a></li>
+      <li><a onclick="loadContent('overview')"><i class="icon-overview"></i> Overview</a></li>
+      <li><a onclick="loadContent('core')"><i class="icon-components"></i> Core Components</a></li>
+      <li><a onclick="loadContent('signals')"><i class="icon-signals"></i> Signal Logic</a></li>
+      <li><a onclick="loadContent('rules')"><i class="icon-rules"></i> Trading Rules</a></li>
+      <li><a onclick="loadContent('custom')"><i class="icon-custom"></i> Customization</a></li>
+      <li><a onclick="loadContent('strengths')"><i class="icon-strengths"></i> Strengths & Limitations</a></li>
     </ul>
   </nav>
 
   <!-- Tab Content -->
-  <div id="documentation" class="tab-content active">
+  <div id="documentation" class="tab-content">
     <!-- Documentation Content Area -->
     <main id="content-area" class="container">
       <!-- Content loaded dynamically -->
@@ -852,6 +995,35 @@
     </div>
   </div>
 
+  <div id="digits-analyzer" class="tab-content">
+    <!-- Digits Analyzer App -->
+    <div id="digits-app">
+      <header>
+        <span>PREMIUM TOOLS CONTACT +254711745588</span>
+        <span class="time-display" id="digits-current-time">--:--:--</span>
+      </header>
+      <div class="digit-selector">
+        <div style="width:100%; text-align:center; margin-bottom:5px; color:#7db8ff;">Select SPECIAL DIGIT (0-9)</div>
+        <button class="digit-btn" data-digit="0">0</button>
+        <button class="digit-btn" data-digit="1">1</button>
+        <button class="digit-btn" data-digit="2">2</button>
+        <button class="digit-btn" data-digit="3">3</button>
+        <button class="digit-btn" data-digit="4">4</button>
+        <button class="digit-btn" data-digit="5">5</button>
+        <button class="digit-btn" data-digit="6">6</button>
+        <button class="digit-btn" data-digit="7">7</button>
+        <button class="digit-btn" data-digit="8">8</button>
+        <button class="digit-btn" data-digit="9">9</button>
+        <div class="digit-special-info" id="digit-special-info">
+          <div>SPECIAL DIGIT: <span class="special-digit-display" id="special-digit-display">-</span></div>
+          <div class="special-strategy" id="special-strategy">Select a digit to analyze its pattern</div>
+        </div>
+      </div>
+      <div class="main-content" id="digits-cards-container"></div>
+      <div id="digits-connection-status" class="connection-status disconnected">Disconnected</div>
+    </div>
+  </div>
+
   <script>
     // Tab functionality
     function showTab(tabId) {
@@ -866,6 +1038,8 @@
       // If showing generator tab, initialize it
       if (tabId === 'generator') {
         initializeGenerator();
+      } else if (tabId === 'digits-analyzer') {
+        initializeDigitsAnalyzer();
       }
     }
 
@@ -1184,13 +1358,10 @@
             const maxPrice = Math.max(...recentPrices);
             const minPrice = Math.min(...recentPrices);
             const range = maxPrice - minPrice;
-
-            if (range > 0) {
-              // In trending markets, widen the thresholds
-              const trendStrength = (maxPrice - minPrice) / (this.priceHistory[this.priceHistory.length - 20]);
-              this.adaptiveOverbought = Math.min(80, 70 + trendStrength * 20);
-              this.adaptiveOversold = Math.max(20, 30 - trendStrength * 20);
-            }
+            const avgPrice = recentPrices.reduce((sum, val) => sum + val, 0) / recentPrices.length;
+            const trendStrength = (maxPrice - minPrice) / (this.priceHistory[this.priceHistory.length - 20]);
+            this.adaptiveOverbought = Math.min(80, 70 + trendStrength * 20);
+            this.adaptiveOversold = Math.max(20, 30 - trendStrength * 20);
           }
 
           const gain = change > 0 ? change : 0;
@@ -1740,7 +1911,10 @@
           const card = document.createElement('div');
           card.className = 'vol-card';
           card.innerHTML = `
-            <div class="vol-title">${v.name}</div>
+            <div class="vol-title">
+              <span>${v.name}</span>
+              <span class="price-display" id="price-${v.symbol}">-</span>
+            </div>
             <div class="data-grid">
               <div class="data-item"><span class="data-label">Price:</span><span id="price-${v.symbol}" class="indicator-value">-</span></div>
               <div class="data-item"><span class="data-label">MACD:</span><span id="macd-${v.symbol}" class="indicator-value">-</span></div>
@@ -2352,19 +2526,340 @@
       });
     }
 
-    function showTab(tabId) {
-      // Hide all tab contents
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
+    // Digits Analyzer Code
+    let digitsAnalyzerInitialized = false;
 
-      // Show the selected tab content
-      document.getElementById(tabId).classList.add('active');
+    function initializeDigitsAnalyzer() {
+      if (digitsAnalyzerInitialized) return;
+      digitsAnalyzerInitialized = true;
 
-      // If showing generator tab, initialize it
-      if (tabId === 'generator') {
-        initializeGenerator();
+      const volatilities = [
+        { symbol: '1HZ10V', name: 'Vol 10 (1s)' },
+        { symbol: '1HZ25V', name: 'Vol 25 (1s)' },
+        { symbol: '1HZ50V', name: 'Vol 50 (1s)' },
+        { symbol: '1HZ75V', name: 'Vol 75 (1s)' }
+      ];
+
+      const dataStore = {};
+      let ws = null;
+      const HISTORY_LENGTH = 200;
+      const MIN_DATA_POINTS = 30;
+      const DIGIT_MEMORY = 3;
+      let selectedDigit = null;
+      let digitWaitTime = 0;
+      let lastSpecialDigitTime = null;
+
+      function updateCurrentTime() {
+        const now = new Date();
+        document.getElementById('digits-current-time').textContent = now.toLocaleTimeString();
       }
+      setInterval(updateCurrentTime, 1000);
+      updateCurrentTime();
+
+      function getLastDecimalDigit(value) {
+        const s = value.toFixed(10).split('.');
+        if (s.length < 2) return null;
+        const decimalPart = s[1].replace(/0+$/, '');
+        if (decimalPart.length === 0) return 0;
+        return parseInt(decimalPart[decimalPart.length - 1]);
+      }
+
+      function predictDigits(data) {
+        if (data.length < MIN_DATA_POINTS) return null;
+
+        const recentDigits = data.slice(-DIGIT_MEMORY).map(d => getLastDecimalDigit(d));
+
+        const digitCounts = new Array(10).fill(0);
+        data.forEach(price => {
+          const digit = getLastDecimalDigit(price);
+          if (digit !== null) digitCounts[digit]++;
+        });
+
+        const total = data.length;
+        const digitProbabilities = digitCounts.map((count, digit) => ({
+          digit,
+          probability: count / total,
+          recent: recentDigits.includes(digit)
+        }));
+
+        digitProbabilities.sort((a, b) => a.probability - b.probability);
+
+        const filteredDigits = digitProbabilities.filter(d => !d.recent);
+
+        const leastProbable = filteredDigits.length > 0
+          ? filteredDigits.slice(0, 3)
+          : digitProbabilities.slice(0, 3);
+
+        return {
+          leastProbable,
+          allProbabilities: digitProbabilities.sort((a, b) => a.digit - b.digit),
+          recentDigits
+        };
+      }
+
+      function analyzeSpecialDigit(data, digit) {
+        if (data.length < MIN_DATA_POINTS || digit === null) return null;
+
+        const digitOccurrences = [];
+        let lastOccurrenceIndex = -1;
+
+        data.forEach((price, index) => {
+          const currentDigit = getLastDecimalDigit(price);
+          if (currentDigit === digit) {
+            if (lastOccurrenceIndex !== -1) {
+              digitOccurrences.push(index - lastOccurrenceIndex);
+            }
+            lastOccurrenceIndex = index;
+          }
+        });
+
+        if (digitOccurrences.length < 3) return null;
+
+        const avgInterval = digitOccurrences.reduce((a, b) => a + b, 0) / digitOccurrences.length;
+
+        const squaredDiffs = digitOccurrences.map(i => Math.pow(i - avgInterval, 2));
+        const stdDev = Math.sqrt(squaredDiffs.reduce((a, b) => a + b, 0) / digitOccurrences.length);
+
+        const lastOccurrence = data.length - 1 - lastOccurrenceIndex;
+        const zScore = (lastOccurrence - avgInterval) / stdDev;
+
+        const probability = 1 - (0.5 * (1 + erf(zScore / Math.sqrt(2))));
+
+        return {
+          avgInterval,
+          stdDev,
+          lastOccurrence,
+          probability,
+          occurrences: digitOccurrences.length
+        };
+      }
+
+      function erf(x) {
+        const sign = (x >= 0) ? 1 : -1;
+        x = Math.abs(x);
+
+        const a1 = 0.254829592;
+        const a2 = -0.284496736;
+        const a3 = 1.421413741;
+        const a4 = -1.453152027;
+        const a5 = 1.061405429;
+        const p = 0.3275911;
+
+        const t = 1.0 / (1.0 + p * x);
+        const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+
+        return sign * y;
+      }
+
+      function buildDigitsCards() {
+        const container = document.getElementById('digits-cards-container');
+        volatilities.forEach(v => {
+          const card = document.createElement('div');
+          card.className = 'vol-card';
+          card.innerHTML = `
+            <div class="vol-title">
+              <span>${v.name}</span>
+              <span class="price-display" id="digits-price-${v.symbol}">-</span>
+            </div>
+            <div class="digit-diff-signal signal-waiting" id="digit-diff-${v.symbol}">
+              Gathering data for digit prediction...
+            </div>
+            <div class="chart-container" id="digits-chart-${v.symbol}"></div>
+          `;
+          container.appendChild(card);
+          dataStore[v.symbol] = {
+            prices: [],
+            ui: {
+              price: card.querySelector(`#digits-price-${v.symbol}`),
+              digitSignal: card.querySelector(`#digit-diff-${v.symbol}`),
+              chart: card.querySelector(`#digits-chart-${v.symbol}`)
+            }
+          };
+        });
+      }
+
+      function updateDigitsPredictionUI(symbol, prediction, specialAnalysis) {
+        const d = dataStore[symbol];
+        if (!prediction) {
+          d.ui.digitSignal.innerHTML = `
+            <div>Collecting data... (${d.prices.length}/${MIN_DATA_POINTS})</div>
+            <div class="last-digits">Recent digits: ${d.prices.slice(-3).map(p => getLastDecimalDigit(p)).join(', ')}</div>
+          `;
+          d.ui.digitSignal.className = 'digit-diff-signal signal-waiting';
+          return;
+        }
+
+        let digitGridHTML = '<div class="digit-grid">';
+        prediction.allProbabilities.forEach(dp => {
+          const probPercent = (dp.probability * 100).toFixed(1);
+          const isLeastProb = prediction.leastProbable.some(lp => lp.digit === dp.digit);
+          const cellClass = isLeastProb ? 'low-prob' : dp.probability < 0.08 ? 'med-prob' : 'high-prob';
+
+          digitGridHTML += `
+            <div class="digit-cell ${cellClass}">
+              ${dp.digit}
+              <div class="digit-probability">
+                <div class="digit-probability-fill" style="width: ${probPercent}%"></div>
+              </div>
+              <div style="font-size:10px">${probPercent}%</div>
+            </div>
+          `;
+        });
+        digitGridHTML += '</div>';
+
+        const predictionText = prediction.leastProbable.length > 0
+          ? `Least likely in next 2 ticks: ${prediction.leastProbable.map(d => d.digit).join(', ')}`
+          : 'Analyzing digit patterns...';
+
+        let specialHTML = '';
+        if (selectedDigit !== null && specialAnalysis) {
+          const probPercent = (specialAnalysis.probability * 100).toFixed(1);
+          const ticksSinceLast = specialAnalysis.lastOccurrence;
+          const avgWait = specialAnalysis.avgInterval.toFixed(1);
+
+          let advice = '';
+          if (specialAnalysis.probability > 0.7 && ticksSinceLast > specialAnalysis.avgInterval) {
+            advice = `STRONG SIGNAL - Digit ${selectedDigit} is OVERDUE (${ticksSinceLast} ticks since last, avg ${avgWait})`;
+            d.ui.digitSignal.className = 'digit-diff-signal signal-special';
+          } else if (specialAnalysis.probability > 0.6) {
+            advice = `Good chance for digit ${selectedDigit} soon (${probPercent}% probability)`;
+            d.ui.digitSignal.className = 'digit-diff-signal signal-predict';
+          } else {
+            advice = `Digit ${selectedDigit} not likely soon (${probPercent}% probability)`;
+            d.ui.digitSignal.className = 'digit-diff-signal signal-predict';
+          }
+
+          specialHTML = `
+            <div class="special-prediction">
+              <div>SPECIAL DIGIT ANALYSIS (${selectedDigit}):</div>
+              <div>Probability in next tick: ${probPercent}%</div>
+              <div>Ticks since last: ${ticksSinceLast} (avg ${avgWait} ± ${specialAnalysis.stdDev.toFixed(1)})</div>
+              <div class="special-advice">${advice}</div>
+            </div>
+          `;
+        } else {
+          d.ui.digitSignal.className = 'digit-diff-signal signal-predict';
+        }
+
+        d.ui.digitSignal.innerHTML = `
+          <div class="prediction-header">${predictionText}</div>
+          ${digitGridHTML}
+          <div class="probability-scale">
+            <span>High probability</span>
+            <span>Low probability</span>
+          </div>
+          <div class="last-digits">Recent digits: ${prediction.recentDigits.join(', ')} (avoiding these)</div>
+          ${specialHTML}
+        `;
+
+        // Update chart
+        updateDigitsChart(d.ui.chart, d.prices, prediction.allProbabilities);
+      }
+
+      function updateDigitsChart(container, prices, probabilities) {
+        // Simple visualization of probabilities
+        const canvas = document.createElement('canvas');
+        container.innerHTML = '';
+        container.appendChild(canvas);
+
+        if (prices.length < MIN_DATA_POINTS) return;
+
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width = container.clientWidth;
+        const height = canvas.height = container.clientHeight;
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Draw probability bars
+        const barWidth = width / probabilities.length;
+        probabilities.forEach((prob, index) => {
+          const barHeight = prob.probability * height;
+          ctx.fillStyle = `hsl(${prob.probability * 120}, 100%, 50%)`;
+          ctx.fillRect(index * barWidth, height - barHeight, barWidth - 1, barHeight);
+        });
+      }
+
+      function handleDigitsTick(tick) {
+        const { symbol, quote } = tick;
+        const d = dataStore[symbol];
+        if (!d) return;
+
+        const price = parseFloat(quote);
+        d.prices.push(price);
+        if (d.prices.length > HISTORY_LENGTH) d.prices.shift();
+
+        d.ui.price.textContent = price.toFixed(5);
+
+        const prediction = predictDigits(d.prices);
+        const specialAnalysis = selectedDigit !== null ? analyzeSpecialDigit(d.prices, selectedDigit) : null;
+        updateDigitsPredictionUI(symbol, prediction, specialAnalysis);
+      }
+
+      function connectDigitsWebSocket() {
+        updateDigitsStatus('connecting', 'Connecting...');
+        if (ws) ws.close();
+        ws = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089');
+
+        ws.onopen = () => {
+          updateDigitsStatus('connected', 'Connected');
+          volatilities.forEach(v => ws.send(JSON.stringify({ ticks: v.symbol, subscribe: 1 })));
+        };
+
+        ws.onmessage = e => {
+          try {
+            const data = JSON.parse(e.data);
+            if (data.msg_type === 'tick') handleDigitsTick(data.tick);
+          } catch (ex) {
+            console.error('Error parsing message:', ex);
+          }
+        };
+
+        ws.onclose = () => {
+          updateDigitsStatus('disconnected', 'Disconnected - Reconnecting...');
+          setTimeout(connectDigitsWebSocket, 3000);
+        };
+
+        ws.onerror = e => {
+          console.error('WebSocket error:', e);
+          ws.close();
+        };
+      }
+
+      function updateDigitsStatus(status, text) {
+        const el = document.getElementById('digits-connection-status');
+        el.className = `connection-status ${status}`;
+        el.textContent = text;
+      }
+
+      function setupDigitSelector() {
+        const digitBtns = document.querySelectorAll('.digit-btn');
+        const specialInfo = document.getElementById('digit-special-info');
+        const specialDigitDisplay = document.getElementById('special-digit-display');
+        const specialStrategy = document.getElementById('special-strategy');
+
+        digitBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            digitBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            selectedDigit = parseInt(btn.dataset.digit);
+            specialDigitDisplay.textContent = selectedDigit;
+            specialInfo.style.display = 'block';
+
+            specialStrategy.textContent = `Analyzing digit ${selectedDigit} patterns...`;
+
+            Object.keys(dataStore).forEach(symbol => {
+              const d = dataStore[symbol];
+              const prediction = predictDigits(d.prices);
+              const specialAnalysis = analyzeSpecialDigit(d.prices, selectedDigit);
+              updateDigitsPredictionUI(symbol, prediction, specialAnalysis);
+            });
+          });
+        });
+      }
+
+      buildDigitsCards();
+      setupDigitSelector();
+      connectDigitsWebSocket();
     }
 
     // Load default content on page load
