@@ -1,384 +1,449 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WAMITI TRADER - Secure Login</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-  :root {
-    --primary: #0057ff;
-    --secondary: #00c8ff;
-    --error: #ff5555;
-    --success: #4CAF50;
-    --dark-bg: #121212;
-    --card-bg: #1e1e1e;
-    --input-bg: #252525;
-    --text-light: #eee;
-    --text-muted: #aaa;
-    --border: #0057ff;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WAMITI TRADER - Secure Login</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0057ff;
+      --secondary: #00c8ff;
+      --error: #ff5555;
+      --success: #4CAF50;
+      --dark-bg: #121212;
+      --card-bg: #1e1e1e;
+      --input-bg: #252525;
+      --text-light: #eee;
+      --text-muted: #aaa;
+      --border: #0057ff;
+    }
 
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
 
-  body {
-    background: var(--dark-bg);
-    color: var(--text-light);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    overflow: hidden;
-    position: relative;
-  }
+    body {
+      background: var(--dark-bg);
+      color: var(--text-light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
 
-  /* Animated background */
-  .bg-animation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    overflow: hidden;
-  }
+    /* Particle background */
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: linear-gradient(to bottom right, var(--dark-bg), #0a0a2a);
+    }
 
-  .bg-circle {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(0, 87, 255, 0.1);
-    animation: float 15s infinite linear;
-  }
+    .particle {
+      position: absolute;
+      background: rgba(0, 200, 255, 0.5);
+      border-radius: 50%;
+      animation: float linear infinite;
+    }
 
-  @keyframes float {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(-1000px) rotate(720deg); }
-  }
+    @keyframes float {
+      0% {
+        transform: translateY(0) translateX(0);
+      }
+      100% {
+        transform: translateY(-100vh) translateX(100vw);
+      }
+    }
 
-  .login-container {
-    background: var(--card-bg);
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 87, 255, 0.3);
-    padding: 40px;
-    width: 100%;
-    max-width: 450px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0, 200, 255, 0.2);
-  }
+    /* Animated background circles */
+    .bg-animation {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
 
-  .login-container::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      to bottom right,
-      rgba(0, 87, 255, 0.1),
-      rgba(0, 200, 255, 0.05)
-    );
-    z-index: -1;
-    transform: rotate(30deg);
-  }
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(0, 87, 255, 0.1);
+      animation: float 15s infinite linear;
+    }
 
-  .logo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 30px;
-  }
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+      }
+    }
 
-  .logo-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 15px;
-    box-shadow: 0 5px 15px rgba(0, 200, 255, 0.4);
-  }
-
-  .logo-icon i {
-    font-size: 28px;
-    color: white;
-  }
-
-  .logo-text {
-    color: var(--secondary);
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 5px;
-  }
-
-  .logo-subtext {
-    color: var(--text-muted);
-    font-size: 12px;
-    font-weight: 300;
-  }
-
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    text-align: left;
-    position: relative;
-  }
-
-  label {
-    color: #7db8ff;
-    font-size: 14px;
-    font-weight: 500;
-  }
-
-  .input-wrapper {
-    position: relative;
-  }
-
-  input {
-    background: var(--input-bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: white;
-    padding: 14px 14px 14px 40px;
-    font-size: 14px;
-    outline: none;
-    width: 100%;
-    transition: all 0.3s ease;
-  }
-
-  input:focus {
-    border-color: var(--secondary);
-    box-shadow: 0 0 0 3px rgba(0, 200, 255, 0.2);
-  }
-
-  .input-icon {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--secondary);
-    font-size: 16px;
-  }
-
-  .password-toggle {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 16px;
-  }
-
-  .password-toggle:hover {
-    color: var(--secondary);
-  }
-
-  button {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  button:hover {
-    background: linear-gradient(135deg, #0047d4, #00b8e6);
-    box-shadow: 0 5px 15px rgba(0, 200, 255, 0.4);
-    transform: translateY(-2px);
-  }
-
-  button:active {
-    transform: translateY(0);
-  }
-
-  button::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -60%;
-    width: 50px;
-    height: 200%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: rotate(30deg);
-    transition: all 0.3s;
-  }
-
-  button:hover::after {
-    left: 120%;
-  }
-
-  .error-message {
-    color: var(--error);
-    font-size: 14px;
-    margin-top: 5px;
-    display: none;
-    text-align: left;
-    font-weight: 500;
-  }
-
-  .footer {
-    margin-top: 30px;
-    font-size: 12px;
-    color: var(--text-muted);
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-
-  .footer a {
-    color: var(--secondary);
-    text-decoration: none;
-    transition: all 0.3s;
-  }
-
-  .footer a:hover {
-    text-decoration: underline;
-  }
-
-  .security-info {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    margin-top: 15px;
-    color: var(--success);
-    font-size: 12px;
-  }
-
-  .security-info i {
-    font-size: 14px;
-  }
-
-  /* Loading spinner */
-  .spinner {
-    display: none;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s ease-in-out infinite;
-    margin: 0 auto;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 480px) {
     .login-container {
-      padding: 30px 20px;
-      margin: 0 15px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 87, 255, 0.3);
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0, 200, 255, 0.2);
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+    }
+
+    .login-container:hover {
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(0, 87, 255, 0.1),
+        rgba(0, 200, 255, 0.05)
+      );
+      z-index: -1;
+      transform: rotate(30deg);
+    }
+
+    .logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      box-shadow: 0 5px 15px rgba(0, 200, 255, 0.4);
+      animation: pulse 2s infinite, rotate 3s infinite;
+      transform-style: preserve-3d;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotateY(0deg);
+      }
+      to {
+        transform: rotateY(360deg);
+      }
+    }
+
+    .logo-icon i {
+      font-size: 36px;
+      color: white;
     }
 
     .logo-text {
-      font-size: 20px;
+      color: var(--secondary);
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
-  }
 
-  /* Password strength meter */
-  .password-strength {
-    height: 4px;
-    background: var(--input-bg);
-    border-radius: 2px;
-    margin-top: 5px;
-    overflow: hidden;
-    display: none;
-  }
+    .logo-subtext {
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 300;
+    }
 
-  .strength-meter {
-    height: 100%;
-    width: 0;
-    transition: width 0.3s, background 0.3s;
-  }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
 
-  /* Session timeout warning */
-  .timeout-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    justify-content: center;
-    align-items: center;
-  }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      position: relative;
+    }
 
-  .timeout-content {
-    background: var(--card-bg);
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    box-shadow: 0 5px 30px rgba(0, 87, 255, 0.5);
-  }
+    label {
+      color: #7db8ff;
+      font-size: 14px;
+      font-weight: 500;
+    }
 
-  .timeout-content h3 {
-    color: var(--secondary);
-    margin-bottom: 15px;
-  }
+    .input-wrapper {
+      position: relative;
+    }
 
-  .timeout-content p {
-    margin-bottom: 20px;
-  }
+    input {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: white;
+      padding: 14px 14px 14px 40px;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
 
-  .timeout-buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-  }
+    input:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(0, 200, 255, 0.2);
+    }
 
-  .timeout-buttons button {
-    flex: 1;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 14px;
-  }
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--secondary);
+      font-size: 16px;
+    }
 
-  .timeout-buttons button:last-child {
-    background: var(--error);
-  }
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+    }
 
-  /* Failed attempts warning */
-  .attempts-warning {
-    color: var(--error);
-    font-size: 13px;
-    margin-top: 5px;
-    display: none;
-  }
-</style>
+    .password-toggle:hover {
+      color: var(--secondary);
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #0047d4, #00b8e6);
+      box-shadow: 0 5px 15px rgba(0, 200, 255, 0.4);
+      transform: translateY(-2px) scale(1.02);
+    }
+
+    button:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 50px;
+      height: 200%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(30deg);
+      transition: all 0.3s;
+    }
+
+    button:hover::after {
+      left: 120%;
+    }
+
+    .error-message {
+      color: var(--error);
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+      text-align: left;
+      font-weight: 500;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .footer a {
+      color: var(--secondary);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .security-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      margin-top: 15px;
+      color: var(--success);
+      font-size: 12px;
+    }
+
+    .security-info i {
+      font-size: 14px;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 30px 20px;
+        margin: 0 15px;
+      }
+      .logo-text {
+        font-size: 22px;
+      }
+    }
+
+    /* Password strength meter */
+    .password-strength {
+      height: 4px;
+      background: var(--input-bg);
+      border-radius: 2px;
+      margin-top: 5px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .strength-meter {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s, background 0.3s;
+    }
+
+    /* Session timeout warning */
+    .timeout-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .timeout-content {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 5px 30px rgba(0, 87, 255, 0.5);
+    }
+
+    .timeout-content h3 {
+      color: var(--secondary);
+      margin-bottom: 15px;
+    }
+
+    .timeout-content p {
+      margin-bottom: 20px;
+    }
+
+    .timeout-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .timeout-buttons button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .timeout-buttons button:last-child {
+      background: var(--error);
+    }
+
+    /* Failed attempts warning */
+    .attempts-warning {
+      color: var(--error);
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
+    }
+  </style>
 </head>
 <body>
+  <!-- Particle background -->
+  <div class="particles" id="particles"></div>
+
   <!-- Animated background circles -->
   <div class="bg-animation">
     <div class="bg-circle" style="width: 300px; height: 300px; top: -150px; left: -150px; animation-delay: 0s;"></div>
@@ -392,7 +457,7 @@
       <div class="logo-icon">
         <i class="fas fa-chart-line"></i>
       </div>
-      <div class="logo-text">Higher-Lower PRO Signal Generator v3.6</div>
+      <div class="logo-text">Higher-Lower PRO</div>
       <div class="logo-subtext">Advanced Trading Analytics Platform</div>
     </div>
 
@@ -440,7 +505,7 @@
 
       <div class="security-info">
         <i class="fas fa-lock"></i>
-        <span>POWERED BY DERIV</span>
+        <span>SECURE LOGIN</span>
       </div>
     </form>
 
@@ -464,6 +529,20 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Create particles
+      const particlesContainer = document.getElementById('particles');
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        particle.style.width = `${Math.random() * 5 + 2}px`;
+        particle.style.height = particle.style.width;
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particle.style.animationDuration = `${Math.random() * 20 + 10}s`;
+        particle.style.animationDelay = `${Math.random() * 5}s`;
+        particlesContainer.appendChild(particle);
+      }
+
       // Clear all authentication data on page load
       sessionStorage.removeItem('authenticated');
       sessionStorage.removeItem('lastActivity');
@@ -487,10 +566,13 @@
       const forgotPassword = document.getElementById('forgotPassword');
 
       // Simulated valid credentials (in production, use server-side validation)
-      const validCredentials = {
-        username: 'klisv',
-        password: 'klisv3098' // Change this to your desired password
-      };
+      const validCredentials = [
+        { username: 'klisv', password: 'klisv3098' },
+        { username: 'user1', password: 'password1' },
+        { username: 'user2', password: 'password2' },
+        { username: 'user3', password: 'password3' },
+        { username: 'user4', password: 'password4' }
+      ];
 
       let failedAttempts = 0;
       const maxAttempts = 3;
@@ -554,7 +636,9 @@
         // Simulate network delay
         setTimeout(() => {
           // Validate credentials
-          if (username === validCredentials.username && password === validCredentials.password) {
+          const isValid = validCredentials.some(cred => cred.username === username && cred.password === password);
+
+          if (isValid) {
             // Successful login
             if (rememberMe) {
               localStorage.setItem('rememberedUser', username);
@@ -661,17 +745,6 @@
         alert('Password reset instructions will be sent to your registered email if your account exists, login help call 0711745588.');
       });
     });
-
-    // Register service worker to enable offline login page
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-          console.log('ServiceWorker registration successful');
-        }, function(err) {
-          console.log('ServiceWorker registration failed: ', err);
-        });
-      });
-    }
   </script>
 </body>
 </html>
