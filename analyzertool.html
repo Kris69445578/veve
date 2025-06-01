@@ -64,7 +64,7 @@
       border-radius: 8px;
       padding: 30px;
       margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0,87,255,0.6);
+      box-shadow: 0 0 10px rgba(0, 87, 255, 0.6);
     }
 
     /* Highlighting Colors */
@@ -122,7 +122,7 @@
       font-size: clamp(14px, 4vw, 18px);
       font-weight: 700;
       text-align: center;
-      background: linear-gradient(90deg,#0057ff,#00c8ff);
+      background: linear-gradient(90deg, #0057ff, #00c8ff);
       color: white;
       display: flex;
       justify-content: space-between;
@@ -135,7 +135,7 @@
     }
 
     .settings-btn {
-      background: rgba(255,255,255,0.1);
+      background: rgba(255, 255, 255, 0.1);
       border: none;
       color: white;
       border-radius: 4px;
@@ -157,7 +157,7 @@
       background: #252525;
       border-radius: 10px;
       padding: 10px;
-      box-shadow: inset 0 0 8px rgba(0,0,0,0.5);
+      box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
       position: relative;
     }
 
@@ -327,7 +327,7 @@
       bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.7);
       padding: 4px 12px;
       border-radius: 12px;
       font-size: 11px;
@@ -356,15 +356,15 @@
     }
 
     .positive-bar {
-      background: linear-gradient(90deg, rgba(0,255,0,0.3), rgba(0,255,0,0.8));
+      background: linear-gradient(90deg, rgba(0, 255, 0, 0.3), rgba(0, 255, 0, 0.8));
     }
 
     .negative-bar {
-      background: linear-gradient(90deg, rgba(255,0,0,0.3), rgba(255,0,0,0.8));
+      background: linear-gradient(90deg, rgba(255, 0, 0, 0.3), rgba(255, 0, 0, 0.8));
     }
 
     .neutral-bar {
-      background: rgba(150,150,150,0.3);
+      background: rgba(150, 150, 150, 0.3);
     }
 
     .indicator-strength {
@@ -434,7 +434,7 @@
       border-radius: 8px;
       padding: 10px;
       z-index: 20;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       display: none;
     }
 
@@ -481,7 +481,7 @@
       top: 5px;
       right: 5px;
       font-size: 10px;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       padding: 2px 4px;
       border-radius: 4px;
     }
@@ -499,7 +499,7 @@
     }
 
     .footer {
-     position: absolute;
+      position: absolute;
       bottom: 5px;
       background: #0d6efd;
       color: white;
@@ -533,6 +533,138 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Deriv Account Balance Checker Styles */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    .balance-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px 50px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      text-align: center;
+      margin: 20px auto;
+    }
+    .balance-container h1 {
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+    .balance-container label {
+      display: block;
+      text-align: left;
+      color: #ddd;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .balance-container input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      margin-bottom: 20px;
+      box-sizing: border-box;
+    }
+    .balance-container button {
+      background: #ff416c;
+      background: linear-gradient(to right, #ff4b2b, #ff416c);
+      border: none;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-weight: 600;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .balance-container button:hover {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+    }
+    .balance-container #balance-display {
+      margin-top: 30px;
+      font-size: 22px;
+      font-weight: 700;
+      min-height: 48px;
+      word-wrap: break-word;
+    }
+    .balance-container #error-message {
+      color: #ff6b6b;
+      margin-top: 20px;
+      min-height: 24px;
+    }
+    .balance-container .loader {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top: 4px solid #fff;
+      border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+    .balance-container footer {
+      margin-top: 40px;
+      font-size: 12px;
+    }
+    .balance-container a {
+      color: #ff99a0;
+      text-decoration: none;
+    }
+    .balance-container a:hover {
+      text-decoration: underline;
+    }
+    .balance-container #debug-console {
+      margin-top: 20px;
+      background: black;
+      color: green;
+      font-family: monospace;
+      font-size: 12px;
+      max-height: 150px;
+      overflow-y: auto;
+      border-radius: 10px;
+      padding: 10px;
+      text-align: left;
+      white-space: pre-line;
+      display: none;
+    }
+    .balance-container .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    .balance-container .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .balance-container .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+    .balance-container .extra-info {
+      background-color: black;
+      color: green;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+
     /* Icons (using Unicode characters as pseudo-elements) */
     .icon-trend-up::before {
       content: "↑";
@@ -648,7 +780,7 @@
       text-align: center;
       font-size: 1.3em;
       padding: 20px;
-      background: linear-gradient(90deg, rgba(79,195,247,0.1), rgba(129,199,132,0.1));
+      background: linear-gradient(90deg, rgba(79, 195, 247, 0.1), rgba(129, 199, 132, 0.1));
       border-radius: 10px;
       margin-top: 40px;
       animation: pulse 3s infinite;
@@ -844,7 +976,7 @@
     .special-prediction {
       margin-top: 8px;
       padding: 8px;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0, 0, 0, 0.3);
       border-radius: 5px;
       font-size: 12px;
     }
@@ -877,7 +1009,6 @@
   </style>
 </head>
 <body>
-
   <!-- Navigation Bar -->
   <nav class="navbar">
     <ul class="menu">
@@ -885,6 +1016,7 @@
       <li><a onclick="showTab('documentation')"><i class="icon-docs"></i> Documentation</a></li>
       <li><a onclick="showTab('generator')"><i class="icon-chart"></i> Signal Generator</a></li>
       <li><a onclick="showTab('digits-analyzer')"><i class="icon-chart"></i> Digits Analyzer</a></li>
+      <li><a onclick="showTab('balance-checker')"><i class="icon-chart"></i> Balance Checker</a></li>
       <li><a onclick="loadContent('overview')"><i class="icon-overview"></i> Overview</a></li>
       <li><a onclick="loadContent('core')"><i class="icon-components"></i> Core Components</a></li>
       <li><a onclick="loadContent('signals')"><i class="icon-signals"></i> Signal Logic</a></li>
@@ -977,14 +1109,6 @@
         <p>Adjusts position sizing and take-profit ratios based on real-time volatility, locking in gains faster when momentum spikes.</p>
       </div>
 
-      <h2 style="color: #81c784; text-align: center; margin-top: 40px; animation: glow 2s infinite alternate;">Why This Strategy Wins</h2>
-
-      <div class="strategy-card" style="animation: slideIn 1s ease-out;">
-        <p><span style="color: #ffb74d; font-weight: bold;">🔹 No FOMO Trading</span> – Avoids weak setups, only entering when all conditions align.</p>
-        <p><span style="color: #ffb74d; font-weight: bold;">🔹 Backtested & Reliable</span> – Rigorously tested across different market phases to ensure consistency.</p>
-        <p><span style="color: #ffb74d; font-weight: bold;">🔹 Smart Liquidity Filters</span> – Avoids low-volume periods (like overnight sessions) unless the setup is exceptionally strong.</p>
-      </div>
-
       <div class="verdict">
         This isn't just another indicator-based system — it's an <span style="color: #4fc3f7; font-weight: bold;">intelligent, self-adjusting trading engine</span> that evolves with market conditions. Whether you're a <span style="color: #81c784;">day trader, swing trader, or scalper</span>, this strategy provides <span style="color: #ffb74d;">clear, high-confidence signals</span> while minimizing emotional decision-making.
       </div>
@@ -1024,6 +1148,27 @@
     </div>
   </div>
 
+  <div id="balance-checker" class="tab-content">
+    <!-- Deriv Account Balance Checker -->
+    <div class="balance-container">
+      <h1>Deriv Balance Checker</h1>
+      <div class="tooltip">
+        <label for="api-token">Enter your Deriv API Token</label>
+        <span class="tooltiptext">Enter your API token to check your Deriv account balance.</span>
+      </div>
+      <input type="text" id="api-token" placeholder="API Token" autocomplete="off" />
+      <button id="check-balance-btn">Check Balance</button>
+      <div id="balance-display"></div>
+      <button id="copy-balance-btn" style="display: none;">Copy Balance</button>
+      <div id="error-message"></div>
+      <button id="toggle-debug-btn">Show Debug Console</button>
+      <div id="debug-console" aria-live="polite" aria-atomic="true" role="log"></div>
+      <footer class="extra-info">
+        This tool uses the <a href="https://developers.deriv.com/api/" target="_blank" rel="noopener">Deriv API via WebSocket</a>. Your token is not stored.
+      </footer>
+    </div>
+  </div>
+
   <script>
     // Tab functionality
     function showTab(tabId) {
@@ -1040,6 +1185,8 @@
         initializeGenerator();
       } else if (tabId === 'digits-analyzer') {
         initializeDigitsAnalyzer();
+      } else if (tabId === 'balance-checker') {
+        initializeBalanceChecker();
       }
     }
 
@@ -2341,7 +2488,7 @@
             confirmationReasons.push(`Stoch overbought (${stoch.k.toFixed(1)}/${stoch.d.toFixed(1)})`);
           }
 
-          // 6. Volume confirmation (10% weight from settings)
+          // 6. Volume confirmation (10% weight)
           if (pvt !== null) {
             const volumeWeight = settings.volumeWeight / 100;
             if (pvt.direction === signalDirection) {
@@ -2860,6 +3007,146 @@
       buildDigitsCards();
       setupDigitSelector();
       connectDigitsWebSocket();
+    }
+
+    // Deriv Account Balance Checker Code
+    let balanceCheckerInitialized = false;
+
+    function initializeBalanceChecker() {
+      if (balanceCheckerInitialized) return;
+      balanceCheckerInitialized = true;
+
+      const button = document.getElementById('check-balance-btn');
+      const tokenInput = document.getElementById('api-token');
+      const balanceDisplay = document.getElementById('balance-display');
+      const errorMessage = document.getElementById('error-message');
+      const debugConsole = document.getElementById('debug-console');
+      const toggleDebugBtn = document.getElementById('toggle-debug-btn');
+      const copyBalanceBtn = document.getElementById('copy-balance-btn');
+
+      let ws = null;
+
+      function logDebug(msg) {
+        debugConsole.style.display = 'block';
+        debugConsole.textContent += msg + "\n";
+        debugConsole.scrollTop = debugConsole.scrollHeight;
+        console.log(msg);
+      }
+
+      toggleDebugBtn.addEventListener('click', () => {
+        if (debugConsole.style.display === 'block') {
+          debugConsole.style.display = 'none';
+          toggleDebugBtn.textContent = 'Show Debug Console';
+        } else {
+          debugConsole.style.display = 'block';
+          toggleDebugBtn.textContent = 'Hide Debug Console';
+        }
+      });
+
+      copyBalanceBtn.addEventListener('click', () => {
+        const balanceText = balanceDisplay.textContent;
+        if (balanceText) {
+          navigator.clipboard.writeText(balanceText).then(() => {
+            alert('Balance copied to clipboard!');
+          });
+        }
+      });
+
+      button.addEventListener('click', () => {
+        const token = tokenInput.value.trim();
+        errorMessage.textContent = '';
+        balanceDisplay.textContent = '';
+        debugConsole.textContent = '';
+
+        if (!token) {
+          errorMessage.textContent = 'Please enter a valid API token.';
+          return;
+        }
+
+        button.disabled = true;
+        button.innerHTML = 'Checking... <span class="loader"></span>';
+
+        try {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.close();
+          }
+        } catch (e) {
+          // ignore
+        }
+
+        ws = new WebSocket('wss://ws.binaryws.com/websockets/v3?app_id=1089');
+
+        let authorized = false;
+
+        ws.onopen = () => {
+          logDebug('WebSocket connection opened.');
+          const authorizeReq = { authorize: token };
+          logDebug('Sending authorize request: ' + JSON.stringify(authorizeReq));
+          ws.send(JSON.stringify(authorizeReq));
+        };
+
+        ws.onmessage = (event) => {
+          logDebug('Received message: ' + event.data);
+          let msg;
+          try {
+            msg = JSON.parse(event.data);
+          } catch (e) {
+            errorMessage.textContent = 'Failed to parse message from server.';
+            finish();
+            return;
+          }
+
+          if (msg.error) {
+            errorMessage.textContent = 'Error: ' + (msg.error.message || 'Unknown error');
+            finish();
+            return;
+          }
+
+          if (msg.authorize) {
+            if (msg.authorize.error) {
+              errorMessage.textContent = 'Authorization failed: ' + (msg.authorize.error.message || 'Invalid token');
+              finish();
+              return;
+            }
+            authorized = true;
+            logDebug('Authorization successful.');
+            // Request balance with no currency specified to get default account currency balance
+            const balanceRequest = { balance: 1 };
+            logDebug('Requesting balance...');
+            ws.send(JSON.stringify(balanceRequest));
+            return;
+          }
+
+          if (msg.balance) {
+            balanceDisplay.textContent = `Account Balance: ${msg.balance.balance} ${msg.balance.currency}`;
+            copyBalanceBtn.style.display = 'block';
+            finish();
+            return;
+          }
+        };
+
+        ws.onerror = (err) => {
+          logDebug('WebSocket error occurred.');
+          errorMessage.textContent = 'WebSocket connection error. Please check your internet connection or API token.';
+          finish();
+        };
+
+        ws.onclose = (event) => {
+          logDebug('WebSocket connection closed.');
+          if (!authorized && !errorMessage.textContent) {
+            errorMessage.textContent = 'Connection closed before authorization.';
+          }
+          finish();
+        };
+
+        function finish() {
+          if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.close();
+          }
+          button.disabled = false;
+          button.innerHTML = 'Check Balance';
+        }
+      });
     }
 
     // Load default content on page load
