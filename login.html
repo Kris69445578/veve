@@ -568,10 +568,10 @@
       // Simulated valid credentials (in production, use server-side validation)
       const validCredentials = [
         { username: 'klisv', password: 'klisv3098' },
-        { username: 'user1', password: 'password1' },
-        { username: 'user2', password: 'password2' },
-        { username: 'user3', password: 'password3' },
-        { username: 'user4', password: 'password4' }
+        { username: 'jahim', password: '2275' },
+        { username: 'tom', password: 'joe2325' },
+        { username: 'peter', password: 'login97' },
+        { username: 'other', password: 'pass7890' }
       ];
 
       let failedAttempts = 0;
@@ -714,7 +714,7 @@
           if (seconds <= 0) {
             clearInterval(countdown);
             sessionStorage.removeItem('authenticated');
-            window.location.href = 'index.html';
+            window.location.href = 'login.html';
           }
         }, 1000);
       }
@@ -729,7 +729,7 @@
       logoutButton.addEventListener('click', function() {
         clearInterval(countdown);
         sessionStorage.removeItem('authenticated');
-        window.location.href = 'index.html?logout=true';
+        window.location.href = 'login.html?logout=true';
       });
 
       // Start timeout timer on page load (for demo)
