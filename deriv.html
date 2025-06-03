@@ -982,10 +982,24 @@
     }
 
     
-    .special-advice {
-      color: #1aff00;
-      font-weight: bold;
-    }
+    .signal-good-chance {
+  color: green; /* or any other style you prefer */
+}
+
+.signal-not-likely {
+  color: blue; /* or any other style you prefer */
+}
+
+.special-advice.good-chance {
+  /* Additional styles for good chance advice */
+  font-weight: bold;
+}
+
+.special-advice.not-likely {
+  /* Additional styles for not likely advice */
+  font-style: italic;
+}
+
     
 
     .digit-probability {
@@ -2867,25 +2881,26 @@
           const avgWait = specialAnalysis.avgInterval.toFixed(1);
 
           let advice = '';
-          if (specialAnalysis.probability > 0.7 && ticksSinceLast > specialAnalysis.avgInterval) {
-            advice = `STRONG SIGNAL - Digit ${selectedDigit} is OVERDUE (${ticksSinceLast} ticks since last, avg ${avgWait})`;
-            d.ui.digitSignal.className = 'digit-diff-signal signal-special';
-          } else if (specialAnalysis.probability > 0.6) {
-            advice = `Good chance for digit ${selectedDigit} soon (${probPercent}% probability)`;
-            d.ui.digitSignal.className = 'digit-diff-signal signal-predict';
-          } else {
-            advice = `Digit ${selectedDigit} not likely soon (${probPercent}% probability)`;
-            d.ui.digitSignal.className = 'digit-diff-signal signal-predict';
-          }
+if (specialAnalysis.probability > 0.7 && ticksSinceLast > specialAnalysis.avgInterval) {
+  advice = `STRONG SIGNAL - Digit ${selectedDigit} is OVERDUE (${ticksSinceLast} ticks since last, avg ${avgWait})`;
+  d.ui.digitSignal.className = 'digit-diff-signal signal-special';
+} else if (specialAnalysis.probability > 0.6) {
+  advice = `Good chance for digit ${selectedDigit} soon (${probPercent}% probability)`;
+  d.ui.digitSignal.className = 'digit-diff-signal signal-good-chance';
+} else {
+  advice = `Digit ${selectedDigit} not likely soon (${probPercent}% probability)`;
+  d.ui.digitSignal.className = 'digit-diff-signal signal-not-likely';
+}
 
-          specialHTML = `
-            <div class="special-prediction">
-              <div>SPECIAL DIGIT ANALYSIS (${selectedDigit}):</div>
-              <div>Probability in next tick: ${probPercent}%</div>
-              <div>Ticks since last: ${ticksSinceLast} (avg ${avgWait} ± ${specialAnalysis.stdDev.toFixed(1)})</div>
-              <div class="special-advice">${advice}</div>
-            </div>
-          `;
+specialHTML = `
+  <div class="special-prediction">
+    <div>SPECIAL DIGIT ANALYSIS (${selectedDigit}):</div>
+    <div>Probability in next tick: ${probPercent}%</div>
+    <div>Ticks since last: ${ticksSinceLast} (avg ${avgWait} ± ${specialAnalysis.stdDev.toFixed(1)})</div>
+    <div class="special-advice ${advice.includes('Good chance') ? 'good-chance' : 'not-likely'}">${advice}</div>
+  </div>
+`;
+
         } else {
           d.ui.digitSignal.className = 'digit-diff-signal signal-predict';
         }
