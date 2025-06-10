@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-  <title>Wamiti HL Signal Generator</title>
+  <title>Combined Trading Platform</title>
   <style>
-    /* Combined CSS from both files */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    body {
-      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-      line-height: 1.6;
-      background-color: #121212;
-      color: #eee;
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #1f3329 0%, rgb(0, 0, 0) 100%);
+      color: #f0f0f0;
+      height: 100%;
     }
 
     /* Navigation */
@@ -77,7 +81,7 @@
       font-weight: bold;
     }
     .highlight.cyan {
-      color: teal;
+      color: rgb(0, 28, 128);
       font-weight: bold;
     }
 
@@ -111,7 +115,7 @@
       max-width: 100%;
       background: #1e1e1e;
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(0, 87, 255, 0.6);
+      box-shadow: 0 0 20px rgba(0, 87, 255, 0.6);
       display: grid;
       grid-template-rows: auto 1fr;
       overflow: hidden;
@@ -535,7 +539,6 @@
     }
 
     /* Deriv Account Balance Checker Styles */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
     .balance-container {
       background: rgba(255, 255, 255, 0.1);
       backdrop-filter: blur(10px);
@@ -692,6 +695,19 @@
 
     .icon-chart::before {
       content: "📈";
+    }
+
+    .icon-chat::before {
+      content: "🐦‍🔥";
+    }
+
+
+    .con-chart::before {
+      content: "💵👽💵";
+    }
+
+    .icon-char::before {
+      content: "💫🎯";
     }
 
     .icon-info::before {
@@ -981,26 +997,21 @@
       font-size: 12px;
     }
 
-    
     .signal-good-chance {
-  color: green; /* or any other style you prefer */
-}
+      color: green;
+    }
 
-.signal-not-likely {
-  color: blue; /* or any other style you prefer */
-}
+    .signal-not-likely {
+      color: blue;
+    }
 
-.special-advice.good-chance {
-  /* Additional styles for good chance advice */
-  font-weight: bold;
-}
+    .special-advice.good-chance {
+      font-weight: bold;
+    }
 
-.special-advice.not-likely {
-  /* Additional styles for not likely advice */
-  font-style: italic;
-}
-
-    
+    .special-advice.not-likely {
+      font-style: italic;
+    }
 
     .digit-probability {
       height: 4px;
@@ -1022,17 +1033,86 @@
       margin-top: 10px;
       border-radius: 5px;
     }
+
+    /* Deriv Bot Trading Styles */
+    #bot-section {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(102, 252, 241, 0.7);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin: 0 auto;
+    }
+
+    button {
+      background: #45a29e;
+      border: none;
+      color: #e1e1e1;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+      align-self: flex-start;
+      box-shadow: 0 4px 0px #66fcf1aa;
+    }
+
+    button:hover {
+      background: #66fcf1;
+      color: #0f2027;
+      box-shadow: 0 6px 20px #45a29ecc;
+    }
+
+    .status {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 10px;
+      color: #66fcf1;
+      min-height: 20px;
+    }
+
+    footer {
+      margin-top: 200px;
+      font-size: 0.9rem;
+      color: #66fcf1aa;
+      text-align: center;
+      max-width: 900px;
+    }
+
+    #trading-view {
+      display: none;
+      position: fixed;
+      top: 120px;
+      left: 0;
+      width: 100%;
+      height: calc(100% - 150px);
+      background-color: #0f2027;
+      z-index: 1000;
+    }
+
+    #bot-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
   </style>
 </head>
 <body>
   <!-- Navigation Bar -->
   <nav class="navbar">
     <ul class="menu">
-      <li><a onclick="showTab('volatility')" class="active"><i class="icon-chart"></i> Volatility Strategy</a></li>
-      <li><a onclick="showTab('documentation')"><i class="icon-docs"></i> Documentation</a></li>
-      <li><a onclick="showTab('generator')"><i class="icon-chart"></i> Signal Generator</a></li>
+      <li><a onclick="showTab('volatility')" class="active"><i class="icon-chat"></i> HL Volatility Strategy</a></li>
+      
+      <li><a onclick="showTab('generator')"><i class="icon-chart"></i> HL analysis</a></li>
+      <li><a onclick="showTab('bot-trading')"><i class="con-chart"></i> Dbot</a></li>
       <li><a onclick="showTab('digits-analyzer')"><i class="icon-chart"></i> Digits Analyzer</a></li>
-      <li><a onclick="showTab('balance-checker')"><i class="icon-chart"></i> Balance Checker</a></li>
+      <li><a onclick="showTab('balance-checker')"><i class="icon-char"></i> Balance Checker</a></li>
+      <li><a onclick="showTab('documentation')"><i class="icon-docs"></i> Documentation</a></li>
       <li><a onclick="loadContent('overview')"><i class="icon-overview"></i> Overview</a></li>
       <li><a onclick="loadContent('core')"><i class="icon-components"></i> Core Components</a></li>
       <li><a onclick="loadContent('signals')"><i class="icon-signals"></i> Signal Logic</a></li>
@@ -1185,6 +1265,22 @@
     </div>
   </div>
 
+  <div id="bot-trading" class="tab-content">
+    <!-- Deriv Bot Trading -->
+    <section id="bot-section">
+      <button id="start-trading-btn">Start Trading</button>
+      <div class="status" id="status-msg"></div>
+    </section>
+
+    <div id="trading-view">
+      <iframe id="bot-iframe" src="" title="Deriv Bot Trading Widget" sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+    </div>
+
+    <footer>
+      &copy; 2025 Deriv Bot 👽👽 . This is a simulation and connect to real Deriv APIs.
+    </footer>
+  </div>
+
   <script>
     // Tab functionality
     function showTab(tabId) {
@@ -1203,6 +1299,8 @@
         initializeDigitsAnalyzer();
       } else if (tabId === 'balance-checker') {
         initializeBalanceChecker();
+      } else if (tabId === 'bot-trading') {
+        initializeBotTrading();
       }
     }
 
@@ -2881,26 +2979,25 @@
           const avgWait = specialAnalysis.avgInterval.toFixed(1);
 
           let advice = '';
-if (specialAnalysis.probability > 0.7 && ticksSinceLast > specialAnalysis.avgInterval) {
-  advice = `STRONG SIGNAL - Digit ${selectedDigit} is OVERDUE (${ticksSinceLast} ticks since last, avg ${avgWait})`;
-  d.ui.digitSignal.className = 'digit-diff-signal signal-special';
-} else if (specialAnalysis.probability > 0.6) {
-  advice = `Good chance for digit ${selectedDigit} soon (${probPercent}% probability)`;
-  d.ui.digitSignal.className = 'digit-diff-signal signal-good-chance';
-} else {
-  advice = `Digit ${selectedDigit} not likely soon (${probPercent}% probability)`;
-  d.ui.digitSignal.className = 'digit-diff-signal signal-not-likely';
-}
+          if (specialAnalysis.probability > 0.7 && ticksSinceLast > specialAnalysis.avgInterval) {
+            advice = `STRONG SIGNAL - Digit ${selectedDigit} is OVERDUE (${ticksSinceLast} ticks since last, avg ${avgWait})`;
+            d.ui.digitSignal.className = 'digit-diff-signal signal-special';
+          } else if (specialAnalysis.probability > 0.6) {
+            advice = `Good chance for digit ${selectedDigit} soon (${probPercent}% probability)`;
+            d.ui.digitSignal.className = 'digit-diff-signal signal-good-chance';
+          } else {
+            advice = `Digit ${selectedDigit} not likely soon (${probPercent}% probability)`;
+            d.ui.digitSignal.className = 'digit-diff-signal signal-not-likely';
+          }
 
-specialHTML = `
-  <div class="special-prediction">
-    <div>SPECIAL DIGIT ANALYSIS (${selectedDigit}):</div>
-    <div>Probability in next tick: ${probPercent}%</div>
-    <div>Ticks since last: ${ticksSinceLast} (avg ${avgWait} ± ${specialAnalysis.stdDev.toFixed(1)})</div>
-    <div class="special-advice ${advice.includes('Good chance') ? 'good-chance' : 'not-likely'}">${advice}</div>
-  </div>
-`;
-
+          specialHTML = `
+            <div class="special-prediction">
+              <div>SPECIAL DIGIT ANALYSIS (${selectedDigit}):</div>
+              <div>Probability in next tick: ${probPercent}%</div>
+              <div>Ticks since last: ${ticksSinceLast} (avg ${avgWait} ± ${specialAnalysis.stdDev.toFixed(1)})</div>
+              <div class="special-advice ${advice.includes('Good chance') ? 'good-chance' : 'not-likely'}">${advice}</div>
+            </div>
+          `;
         } else {
           d.ui.digitSignal.className = 'digit-diff-signal signal-predict';
         }
@@ -3166,6 +3263,25 @@ specialHTML = `
       });
     }
 
+    // Deriv Bot Trading Code
+    let botTradingInitialized = false;
+
+    function initializeBotTrading() {
+      if (botTradingInitialized) return;
+      botTradingInitialized = true;
+
+      const startTradingBtn = document.getElementById('start-trading-btn');
+      const botIframe = document.getElementById('bot-iframe');
+      const statusMsg = document.getElementById('status-msg');
+      const tradingView = document.getElementById('trading-view');
+
+      startTradingBtn.addEventListener('click', () => {
+        botIframe.src = 'https://bot.deriv.com/bot.html';
+        tradingView.style.display = 'block';
+        statusMsg.textContent = 'Trading started.';
+      });
+    }
+
     // Load default content on page load
     window.onload = () => {
       showTab('volatility'); // Default to the Volatility Strategy tab
@@ -3180,7 +3296,7 @@ specialHTML = `
 
       // Create falling emojis only on the Volatility Strategy tab
       function startFallingAnimation() {
-        const emojis = ['📈', '💰', '⚡', '💵', '💸', '🎯'];
+        const emojis = ['💵💵', '🎉🎉💸', '💸👽🤖', '💵🎉🎉', '💸🎉🎉', '🤖👽💵','💵💵', '🎉🎉💸', '💸👽🤖', '💵🎉🎉', '💸🎉🎉', '🤖👽💵'];
         setInterval(() => {
           if (document.getElementById('volatility').classList.contains('active')) {
             const emoji = document.createElement('div');
