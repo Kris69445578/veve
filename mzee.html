@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
-  <title>DERIVHACKS</title>
+  <title>Combined Trading Platform</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
@@ -2817,12 +2817,12 @@
       setInterval(updateCurrentTime, 1000);
       updateCurrentTime();
 
-   function getLastDecimalDigit(value) {
+      function getLastDecimalDigit(value) {
         const s = value.toFixed(10).split('.');
-        if (s.length < 2) return null;
-        const decimalPart = s[1].replace(/0+$/, '');
+        if (s.length < 2) return 0;
+        const decimalPart = s[1];
         if (decimalPart.length === 0) return 0;
-        return parseInt(decimalPart[decimalPart.length - 1]);
+        return parseInt(decimalPart[ 1],10);
       }
 
       function predictDigits(data) {
