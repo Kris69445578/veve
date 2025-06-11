@@ -2817,17 +2817,12 @@
       setInterval(updateCurrentTime, 1000);
       updateCurrentTime();
 
-      function getSecondDecimalDigit(value) {
-    // Convert to a string with exactly 2 decimal places (to ensure trailing zeros are kept)
-    const strValue = value.toFixed(2);
-    const parts = strValue.split('.');
-    
-    if (parts.length < 2 || parts[1].length < 2) {
-        return null; // No decimal part or less than 2 decimal digits
-    }
-    
-    // Extract the second decimal digit
-    return parseInt(parts[1][1], 10);
+     function getSecondDecimalDigit(value) {
+    const s = value.toFixed(10).split('.');
+    if (s.length < 2) return null;
+    const decimalPart = s[1];
+    if (decimalPart.length < 2) return 0; // If there's no second digit, return 0
+    return parseInt(decimalPart[1]); // Return the second digit (0-9)
 }
       function predictDigits(data) {
         if (data.length < MIN_DATA_POINTS) return null;
