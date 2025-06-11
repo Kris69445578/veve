@@ -2817,11 +2817,13 @@
       setInterval(updateCurrentTime, 1000);
       updateCurrentTime();
 
-   function getSecondDecimalDigit(value) {
-  const s = value.toFixed(10).split('.');
-  if (s.length < 2 || s[1].length < 2) return null; // less than 2 decimal digits
-  return parseInt(s[1][1]); // second digit after decimal
-}
+   function getLastDecimalDigit(value) {
+        const s = value.toFixed(10).split('.');
+        if (s.length < 2) return null;
+        const decimalPart = s[1].replace(/0+$/, '');
+        if (decimalPart.length === 0) return 0;
+        return parseInt(decimalPart[decimalPart.length - 1]);
+      }
 
       function predictDigits(data) {
         if (data.length < MIN_DATA_POINTS) return null;
