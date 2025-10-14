@@ -3285,7 +3285,7 @@
       const tradingView = document.getElementById('trading-view');
 
       startTradingBtn.addEventListener('click', () => {
-        botIframe.src = 'https://bot.deriv.com/';
+        botIframe.src = 'https://oauth.deriv.com/oauth2/authorize?app_id=65555&l=EN&brand=deriv';
         tradingView.style.display = 'block';
         statusMsg.textContent = 'Trading started.';
       });
@@ -3342,6 +3342,7 @@
   </script>
 </body>
 </html>
+
 
 
 
