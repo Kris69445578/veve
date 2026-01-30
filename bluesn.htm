@@ -1112,64 +1112,11 @@
       <li><a onclick="showTab('bot-trading')"><i class="con-chart"></i> HIGHER/LOWER</a></li>
       <li><a onclick="showTab('digits-analyzer')"><i class="icon-chart"></i> Digits Analyzer</a></li>
       <li><a onclick="showTab('balance-checker')"><i class="icon-char"></i> Balance Checker</a></li>
-      <li><a onclick="showTab('documentation')"><i class="icon-docs"></i> Documentation</a></li>
-      <li><a onclick="loadContent('overview')"><i class="icon-overview"></i> Overview</a></li>
-      <li><a onclick="loadContent('core')"><i class="icon-components"></i> Core Components</a></li>
-      <li><a onclick="loadContent('signals')"><i class="icon-signals"></i> Signal Logic</a></li>
-      <li><a onclick="loadContent('rules')"><i class="icon-rules"></i> Trading Rules</a></li>
-      <li><a onclick="loadContent('custom')"><i class="icon-custom"></i> Customization</a></li>
-      <li><a onclick="loadContent('strengths')"><i class="icon-strengths"></i> Strengths & Limitations</a></li>
     </ul>
   </nav>
 
   <!-- Tab Content -->
-  <div id="documentation" class="tab-content">
-    <!-- Documentation Content Area -->
-    <main id="content-area" class="container">
-      <!-- Content loaded dynamically -->
-    </main>
-  </div>
-
-  <div id="generator" class="tab-content">
-    <!-- Signal Generator App -->
-    <div id="app">
-      <header>
-        <span>WAMITI HL SIGNAL GENERATOR</span>
-        <div class="header-controls">
-          <button class="settings-btn" id="settings-btn">Settings</button>
-        </div>
-      </header>
-      <div class="main-content" id="cards-container"></div>
-      <div id="connection-status" class="connection-status disconnected">Disconnected</div>
-    </div>
-
-    <div class="settings-panel" id="settings-panel">
-      <button class="close-settings" id="close-settings">×</button>
-      <h3>Analysis Settings</h3>
-      <div class="settings-row">
-        <span class="settings-label">Confirmation Period:</span>
-        <input type="number" class="settings-input" id="confirmation-period" value="7" min="1" max="20">
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Strong Threshold:</span>
-        <input type="number" class="settings-input" id="strong-threshold" value="75" min="50" max="100" step="5">
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Weak Threshold:</span>
-        <input type="number" class="settings-input" id="weak-threshold" value="40" min="20" max="60" step="5">
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Volume Weight:</span>
-        <input type="number" class="settings-input" id="volume-weight" value="20" min="0" max="50" step="5">
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Trend Weight:</span>
-        <input type="number" class="settings-input" id="trend-weight" value="25" min="0" max="50" step="5">
-      </div>
-    </div>
-  </div>
-
-  <div id="volatility" class="tab-content">
+  <div id="volatility" class="tab-content active">
     <!-- Volatility Trading Strategy Content -->
     <div class="container">
       <h1>WAMITI'S HIGHER LOWER Trading Strategy</h1>
@@ -1211,6 +1158,45 @@
 
       <div class="ready">
         Ready to trade smarter? 🚀
+      </div>
+    </div>
+  </div>
+
+  <div id="generator" class="tab-content">
+    <!-- Signal Generator App -->
+    <div id="app">
+      <header>
+        <span>WAMITI HL SIGNAL GENERATOR</span>
+        <div class="header-controls">
+          <button class="settings-btn" id="settings-btn">Settings</button>
+        </div>
+      </header>
+      <div class="main-content" id="cards-container"></div>
+      <div id="connection-status" class="connection-status disconnected">Disconnected</div>
+    </div>
+
+    <div class="settings-panel" id="settings-panel">
+      <button class="close-settings" id="close-settings">×</button>
+      <h3>Analysis Settings</h3>
+      <div class="settings-row">
+        <span class="settings-label">Confirmation Period:</span>
+        <input type="number" class="settings-input" id="confirmation-period" value="7" min="1" max="20">
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Strong Threshold:</span>
+        <input type="number" class="settings-input" id="strong-threshold" value="75" min="50" max="100" step="5">
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Weak Threshold:</span>
+        <input type="number" class="settings-input" id="weak-threshold" value="40" min="20" max="60" step="5">
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Volume Weight:</span>
+        <input type="number" class="settings-input" id="volume-weight" value="20" min="0" max="50" step="5">
+      </div>
+      <div class="settings-row">
+        <span class="settings-label">Trend Weight:</span>
+        <input type="number" class="settings-input" id="trend-weight" value="25" min="0" max="50" step="5">
       </div>
     </div>
   </div>
@@ -1302,126 +1288,6 @@
       } else if (tabId === 'bot-trading') {
         initializeBotTrading();
       }
-    }
-
-    // Documentation content sections
-    const contentSections = {
-      overview: `
-        <h2>Overview</h2>
-        <p>This is a comprehensive higher/lower signal generator for volatility indices that combines multiple technical indicators with adaptive logic to generate trading signals. The strategy focuses on identifying high-probability entry points with clear risk parameters.</p>
-      `,
-      core: `
-        <h2>Core Components</h2>
-        <ul>
-          <li><strong>Enhanced MACD:</strong> Adaptive MACD with divergence detection</li>
-          <li><strong>Enhanced RSI:</strong> With dynamic overbought/oversold levels</li>
-          <li><strong>Enhanced Stochastic:</strong> With adaptive thresholds</li>
-          <li><strong>Enhanced ADX:</strong> For trend strength and direction</li>
-          <li><strong>Bollinger Bands:</strong> With adaptive width based on volatility</li>
-          <li><strong>VWMA (Volume Weighted MA):</strong> For volume confirmation</li>
-          <li><strong>Price Volume Trend:</strong> To assess volume momentum</li>
-          <li><strong>Pattern Recognition:</strong> Identifies common chart patterns</li>
-          <li><strong>Time Trend Analysis:</strong> Multi-timeframe confirmation</li>
-        </ul>
-      `,
-      signals: `
-        <h2>Signal Generation Logic</h2>
-        <h3>Confirmation System</h3>
-        <ul>
-          <li>Requires multiple consecutive confirmations (default 7 periods)</li>
-          <li>Each indicator contributes to a weighted confidence score</li>
-          <li>Signals only generated when confidence exceeds thresholds:
-            <ul>
-              <li>Weak threshold: 40% (<span class="highlight yellow">yellow signal</span>)</li>
-              <li>Strong threshold: 75% (<span class="highlight green">green/red signal</span>)</li>
-              <li>Very strong threshold: 90% (<span class="highlight cyan">cyan signal</span>)</li>
-            </ul>
-          </li>
-        </ul>
-
-        <h3>Signal Types</h3>
-        <ul>
-          <li><strong>Higher Signal (Bullish):</strong> Triggered when multiple indicators suggest upward momentum</li>
-          <li><strong>Lower Signal (Bearish):</strong> Triggered when multiple indicators suggest downward momentum</li>
-          <li><strong>Consolidation Signal:</strong> Detects ranging markets with low volatility</li>
-          <li><strong>Building Signal:</strong> Shows when indicators are aligning but haven't reached confirmation threshold</li>
-        </ul>
-
-        <h3>Weighting System</h3>
-        <ul>
-          <li>MACD: 20%</li>
-          <li>RSI: 15%</li>
-          <li>ADX: 20%</li>
-          <li>Bollinger Bands: 15%</li>
-          <li>Stochastic: 10%</li>
-          <li>Volume: 10%</li>
-          <li>Pattern Recognition: 10%</li>
-          <li>Time Trend: 10%</li>
-        </ul>
-      `,
-      rules: `
-        <h2>Trading Rules</h2>
-        <h3>Entry Rules</h3>
-        <ol>
-          <li>Wait for a confirmed signal (strong color)</li>
-          <li>Ensure confidence score is above 75%</li>
-          <li>Verify multiple timeframes agree (if time filter enabled)</li>
-          <li>Check for supporting volume (if volume weight > 0)</li>
-          <li>Enter when price touches the barrier after signal</li>
-        </ol>
-
-        <h3>Exit Rules</h3>
-        <ul>
-          <li><strong>For Higher Signals:</strong> Take profit at Higher barrier; Stop loss if price hits Lower barrier</li>
-          <li><strong>For Lower Signals:</strong> Take profit at Lower barrier; Stop loss if price hits Higher barrier</li>
-          <li>Exit if signal reverses (opposite signal appears)</li>
-        </ul>
-
-        <h3>Risk Management</h3>
-        <ul>
-          <li>Default barriers provide natural risk/reward ratio</li>
-          <li>Confidence meter helps assess position sizing</li>
-          <li>Consolidation detection prevents trading in ranging markets</li>
-        </ul>
-      `,
-      custom: `
-        <h2>Customization Options</h2>
-        <ul>
-          <li>Adjust confirmation period (1–20)</li>
-          <li>Set strong/weak confidence thresholds</li>
-          <li>Modify volume and trend weights</li>
-          <li>Customize individual barriers per volatility index</li>
-          <li>Enable/disable pattern recognition</li>
-          <li>Toggle time filter</li>
-        </ul>
-      `,
-      strengths: `
-        <h2>Strengths & Limitations</h2>
-        <div class="flex-container">
-          <div class="card green">
-            <h3>Strengths</h3>
-            <ul>
-              <li>Multi-indicator confirmation reduces false signals</li>
-              <li>Adaptive logic works across different market conditions</li>
-              <li>Clear visual signals with confidence indicators</li>
-              <li>Comprehensive analysis of trend, momentum, and volume</li>
-            </ul>
-          </div>
-          <div class="card red">
-            <h3>Limitations</h3>
-            <ul>
-              <li>Requires sufficient historical data (50+ periods)</li>
-              <li>Works best on volatile instruments</li>
-              <li>Default barriers may need adjustment for different market conditions</li>
-            </ul>
-          </div>
-        </div>
-      `
-    };
-
-    function loadContent(section) {
-      const contentArea = document.getElementById("content-area");
-      contentArea.innerHTML = contentSections[section] || "<p>Content not found.</p>";
     }
 
     // Signal Generator Code
@@ -3342,12 +3208,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
