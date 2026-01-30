@@ -1,3 +1,21 @@
+<script>
+  // Disable right click
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Disable key shortcuts
+  document.addEventListener('keydown', function (e) {
+    if (
+      e.ctrlKey && (e.key === 'u' || e.key === 'U') || // Ctrl+U
+      e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i') || // Ctrl+Shift+I
+      e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c') || // Ctrl+Shift+C
+      e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j') || // Ctrl+Shift+J
+      e.key === 'F12'
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  });
+</script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -749,3 +767,4 @@
   </script>
 </body>
 </html>
+
